@@ -57,7 +57,8 @@ const UserCard = ({ open }: { open: boolean }) => {
                         <Typography variant="caption" sx={{ color: '#ccc' }}>Remy Sharp</Typography>
                     </Stack>
                 </Stack>
-                <Divider color="#ccc" />
+                
+                <Divider color="#434D5B" />
 
             </Box>
         </>

@@ -15,9 +15,9 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
-import ChatContainer from './ChatContainer';
-import Navbar from './Navbar';
-import UserCard from './UserCard';
+import ChatContainer from '../chat/ChatContainer';
+import Navbar from '../Navbar';
+import UserCard from '../UserCard';
 import { Avatar, Button, Drawer, Stack } from '@mui/material';
 import PermanentDrawer from './PermanentDrawer';
 import useWindowSize from '@/custom hooks/useWindowSize';
@@ -45,7 +45,7 @@ const TemporaryDrawer = ({ open, handleDrawerClose, children }: Props) => {
             <Box
                 sx={{
                     position: 'fixed',
-                    top: '70px',
+                    top: '120px',
                     left: '-10px',
                     zIndex: 1000,
                     // display: { sm: 'none', xs: 'block' },

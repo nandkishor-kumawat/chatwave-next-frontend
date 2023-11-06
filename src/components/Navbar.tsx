@@ -67,7 +67,7 @@ function Navbar() {
                 <Button
                   key={page}
                   onClick={handleCloseNavMenu}
-                  sx={{ my: 2, color: 'white', display: 'block' }}
+                  sx={{ my: 2, color: 'white', display: 'block',padding:'0 8px' }}
                 >
                   <Link href={`/${page}`}>{page}</Link>
                 </Button>

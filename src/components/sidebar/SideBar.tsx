@@ -18,9 +18,9 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
-import ChatContainer from './ChatContainer';
-import Navbar from './Navbar';
-import UserCard from './UserCard';
+import ChatContainer from '../chat/ChatContainer';
+import Navbar from '../Navbar';
+import UserCard from '../UserCard';
 import { Avatar, Button, Drawer, Stack } from '@mui/material';
 import PermanentDrawer from './PermanentDrawer';
 import useWindowSize, { Size } from '@/custom hooks/useWindowSize';
@@ -41,9 +41,10 @@ export default function MiniDrawer({ open, handleDrawerClose, size }: Props) {
     const listD = () => (
         <List>
             {Array.from(new Array(24)).map((_, index) => (
-
-                <UserCard key={index} open={open} />
-
+                <>
+                    <UserCard key={index} open={open} />
+                    {/* {(index < 23) ? <Divider /> : null} */}
+                </>
             ))}
         </List>)
 
