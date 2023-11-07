@@ -1,8 +1,10 @@
 import { Skeleton, Box, Stack, Avatar, Typography, Divider, ListItem, ListItemButton, ListItemIcon, FormControl, InputLabel, Input, FormHelperText, Button } from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { alpha, styled } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import { TextareaAutosize as BaseTextareaAutosize } from '@mui/base/TextareaAutosize';
+import { useAppDispatch, useAppSelector } from '@/redux/store';
+import { setChatMessage } from '@/redux/features/userSlice';
 const ChatForm = () => {
     const blue = {
         100: '#DAECFF',
@@ -96,9 +98,20 @@ const ChatForm = () => {
         },
     }));
 
-    const handleSubmit = (e:Event) => {
+    const dispatch = useAppDispatch();
+    const message = useAppSelector((state) => state.user.message);
+
+    useEffect(() => {
+        console.log(message)
+    }, [message])
+    
+
+    const handleSubmit = (e: any) => {
         e.preventDefault();
-        console.log(e)
+        const msg = e.target.message
+        // msg.value = 'this is '
+        dispatch(setChatMessage(msg.value))
+
     }
 
 
@@ -114,31 +127,34 @@ const ChatForm = () => {
             >
                 <Divider color="#434D5B" />
 
-                <FormControl
-                    sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        py: 1,
-                        px: 2,
-                        gap: 1,
-                        alignItems: 'center',
-                    }}
-                >
-                    <Box
+                <form onSubmit={handleSubmit}>
+                    <FormControl
                         sx={{
                             display: 'flex',
-                            flex: 1,
+                            flexDirection: 'row',
+                            py: 1,
+                            px: 2,
+                            gap: 1,
                             alignItems: 'center',
                         }}
                     >
-                        <Textarea
-                            maxRows={4}
-                            placeholder="Type your message..."
-                        />
-                    </Box>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flex: 1,
+                                alignItems: 'center',
+                            }}
+                        >
+                            <Textarea
+                                maxRows={4}
+                                name='message'
+                                placeholder="Type your message..."
+                            />
+                        </Box>
 
-                    <Button variant="outlined" type='submit'>SEND</Button>
-                </FormControl>
+                        <Button variant="outlined" type='submit'>SEND</Button>
+                    </FormControl>
+                </form>
 
 
 

@@ -41,10 +41,7 @@ export default function MiniDrawer({ open, handleDrawerClose, size }: Props) {
     const listD = () => (
         <List>
             {Array.from(new Array(24)).map((_, index) => (
-                <>
-                    <UserCard key={index} open={open} />
-                    {/* {(index < 23) ? <Divider /> : null} */}
-                </>
+                <UserCard key={index} open={open} />
             ))}
         </List>)
 

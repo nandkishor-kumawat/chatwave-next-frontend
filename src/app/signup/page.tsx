@@ -36,7 +36,7 @@ function SignUp() {
             backgroundColor: 'rgb(255 255 255 / 5%)',
             border: '1px solid rgba(255, 255, 255, 0.3)',
         },
-        label:{
+        label: {
             color: 'white',
         }
     };
@@ -47,7 +47,7 @@ function SignUp() {
                 <Typography variant="h5">Create your account</Typography>
                 <form style={formStyle}>
                     <TextField
-                      variant="filled"
+                        variant="filled"
                         margin="normal"
                         required
                         fullWidth
@@ -57,7 +57,7 @@ function SignUp() {
                         sx={inputStyle}
                     />
                     <TextField
-                      variant="filled"
+                        variant="filled"
                         margin="normal"
                         required
                         fullWidth
@@ -68,7 +68,7 @@ function SignUp() {
                         sx={inputStyle}
                     />
                     <TextField
-                      variant="filled"
+                        variant="filled"
                         margin="normal"
                         required
                         fullWidth
@@ -78,7 +78,7 @@ function SignUp() {
                         sx={inputStyle}
                     />
                     <TextField
-                      variant="filled"
+                        variant="filled"
                         margin="normal"
                         required
                         fullWidth
