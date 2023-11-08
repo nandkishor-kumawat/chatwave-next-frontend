@@ -11,7 +11,7 @@ const ChatContainer = () => {
             sx={{
                 display: 'flex',
                 flex: 1,
-                height: {xs:'calc(100vh - 56px)',sm:'calc(100vh - 64px)'},
+                height: { xs: 'calc(100vh - 56px)', sm: 'calc(100vh - 64px)' },
                 overflow: 'hidden',
                 flexDirection: 'column',
             }}

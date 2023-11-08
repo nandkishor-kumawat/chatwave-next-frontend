@@ -32,7 +32,7 @@ const PermanentDrawer = ({ children }: { children: React.ReactNode }) => {
             }}
         >
             <Toolbar />
-            <Box sx={{ overflow: 'auto' }}>
+            <Box sx={{ overflow: 'auto' }} className='scrollbar'>
                 {/* <List>
                     {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
                         <ListItem key={text} disablePadding>

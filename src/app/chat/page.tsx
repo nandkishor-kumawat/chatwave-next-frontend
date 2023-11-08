@@ -2,12 +2,9 @@
 import socket from '@/socket';
 import Image from 'next/image'
 import { useEffect, useState } from 'react';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import SideBar from '@/components/sidebar/SideBar';
 import { Box, Container, IconButton } from '@mui/material';
 import ChatContainer from '@/components/chat/ChatContainer';
-import Navbar from '@/components/Navbar';
 import useWindowSize from '@/custom hooks/useWindowSize';
 
 export default function Home() {

@@ -8,7 +8,9 @@ const ChatBody = () => {
             flex: 1,
             overflowY: 'auto',
             p: 2,
-        }}>
+        }}
+            className='scrollbar'
+        >
             {Array(13).fill(0).map((_, i) => (
                 <ChatBubble key={i} type={Math.round(Math.random()) % 2 === 0 ? 'start' : 'end'} />
             ))}

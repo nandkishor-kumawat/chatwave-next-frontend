@@ -51,7 +51,20 @@ const TemporaryDrawer = ({ open, handleDrawerClose, children }: Props) => {
                     // display: { sm: 'none', xs: 'block' },
                 }}
             >
-                <IconButton onClick={handleDrawerClose} sx={{ p: 0 }} >
+                <IconButton onClick={handleDrawerClose} sx={{
+                    p: 0,
+                    width: '30px',
+                    backgroundColor: '#2c74ff',
+                    borderRadius: '0% 50% 50% 0%',
+                    left: '5px',
+                    transition: 'all 0.2s ease',
+                    '&:hover': {
+                        backgroundColor: 'rgb(138, 180, 248)',
+                        left: '10px'
+                    }
+                }}
+                    className='bg-[#2c74ff]'
+                >
                     {!open ? <ChevronRightIcon sx={{ color: 'white', width: '30px', height: '30px' }} /> : <ChevronLeftIcon sx={{ color: 'white', width: '30px', height: '30px' }} />}
                 </IconButton>
             </Box>
@@ -64,9 +77,10 @@ const TemporaryDrawer = ({ open, handleDrawerClose, children }: Props) => {
                     zIndex: 1000,
                     '& .MuiDrawer-paper': {
                         backgroundColor: '#0e0f30',
-                        width: drawerWidth 
+                        width: drawerWidth
                     }
                 }}
+                className='scrollbar'
             >
                 <Toolbar sx={{ backgroundColor: 'transparent' }} />
                 <Box sx={{
@@ -86,6 +100,8 @@ const TemporaryDrawer = ({ open, handleDrawerClose, children }: Props) => {
                 >
                     {children}
                 </Box>
+
+  
             </Drawer>
 
 
