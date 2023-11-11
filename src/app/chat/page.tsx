@@ -20,15 +20,6 @@ export default function Home() {
     }
   }, [])
 
-  const [open, setOpen] = useState<boolean>(false);
-
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(prev => !prev);
-  };
 
   const size = useWindowSize();
 
@@ -36,7 +27,7 @@ export default function Home() {
     <>
       <Box sx={{ display: 'flex' }}>
 
-        <SideBar open={open} handleDrawerClose={handleDrawerClose} size={size} />
+        <SideBar size={size} />
 
         <ChatContainer />
 
