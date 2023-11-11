@@ -28,20 +28,12 @@ type Props = {
     children: React.ReactNode
 }
 
-const drawerWidth = 250;
+const drawerWidth = 280;
 
 
 const TemporaryDrawer = ({ open, handleDrawerClose, children }: Props) => {
     return (
-        <Box sx={{
-            // position: { sm: 'relative', xs: 'absolute' },
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            zIndex: 1000,
-            minWidth: '50px'
-        }}>
-
+        <>
             <Box
                 sx={{
                     position: 'fixed',
@@ -53,23 +45,23 @@ const TemporaryDrawer = ({ open, handleDrawerClose, children }: Props) => {
             >
                 <IconButton onClick={handleDrawerClose} sx={{
                     p: 0,
-                    width: '30px',
+                    width: '40px',
+                    aspectRatio: '1/1',
                     backgroundColor: '#2c74ff',
-                    borderRadius: '0% 50% 50% 0%',
-                    left: '5px',
+                    borderRadius: '0% 100% 100% 0% / 0% 100% 100% 0%',
+                    left: '-4px',
+                    top: '-7px',
                     transition: 'all 0.2s ease',
                     '&:hover': {
-                        backgroundColor: 'rgb(138, 180, 248)',
+                        backgroundColor: 'rgb(138 180 248 / 50%)',
                         left: '10px'
                     }
                 }}
                     className='bg-[#2c74ff]'
                 >
-                    {!open ? <ChevronRightIcon sx={{ color: 'white', width: '30px', height: '30px' }} /> : <ChevronLeftIcon sx={{ color: 'white', width: '30px', height: '30px' }} />}
+                    {!open ? <ChevronRightIcon sx={{ color: 'white', fontSize: '40px', }} /> : <ChevronLeftIcon sx={{ color: 'white', fontSize: '40px' }} />}
                 </IconButton>
             </Box>
-
-
             <Drawer
                 open={open}
                 anchor='left'
@@ -83,12 +75,13 @@ const TemporaryDrawer = ({ open, handleDrawerClose, children }: Props) => {
                 className='scrollbar'
             >
                 <Toolbar sx={{ backgroundColor: 'transparent' }} />
+
                 <Box sx={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'flex-end',
                 }}  >
-                    <IconButton onClick={handleDrawerClose}>
+                    <IconButton onClick={handleDrawerClose} >
                         {!open ? <ChevronRightIcon sx={{ color: 'white' }} /> : <ChevronLeftIcon sx={{ color: 'white' }} />}
                     </IconButton>
                 </Box>
@@ -100,15 +93,9 @@ const TemporaryDrawer = ({ open, handleDrawerClose, children }: Props) => {
                 >
                     {children}
                 </Box>
-
-  
             </Drawer>
+        </>
 
-
-
-
-
-        </Box>
     )
 }
 

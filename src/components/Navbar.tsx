@@ -6,7 +6,7 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -78,7 +78,8 @@ function Navbar() {
           <Box sx={{ flexGrow: 0, justifySelf: 'flex-end' }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/vercel.svg" />
+                {/* <Avatar alt="Remy Sharp" src="/vercel.svdg" /> */}
+                <AccountCircleIcon sx={{ color: 'white', fontSize: '40px' }} />
               </IconButton>
             </Tooltip>
             <Menu

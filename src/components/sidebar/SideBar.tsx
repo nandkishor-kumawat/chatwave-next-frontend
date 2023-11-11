@@ -29,14 +29,23 @@ import TemporaryDrawer from './TemporaryDrawer';
 
 
 type Props = {
-    open: boolean
-    handleDrawerClose: () => void,
+    // open: boolean
+    // handleDrawerClose: () => void,
     size: Size
 }
 
 
-export default function MiniDrawer({ open, handleDrawerClose, size }: Props) {
+export default function MiniDrawer({ size }: Props) {
 
+    const [open, setOpen] = React.useState<boolean>(false);
+
+    const handleDrawerOpen = () => {
+        setOpen(true);
+    };
+
+    const handleDrawerClose = () => {
+        setOpen(prev => !prev);
+    };
 
     const listD = () => (
         <List>
@@ -53,16 +62,26 @@ export default function MiniDrawer({ open, handleDrawerClose, size }: Props) {
 
 
     return (
+        <>
 
-        size?.width > 600 ? (
-            <PermanentDrawer>
-                {listD()}
-            </PermanentDrawer>
-        ) : (
-            <TemporaryDrawer open={open} handleDrawerClose={handleDrawerClose}>
-                {listD()}
-            </TemporaryDrawer>
-        )
+
+
+   
+
+
+
+            {size?.width > 600 ? (
+                <PermanentDrawer>
+                    {listD()}
+                </PermanentDrawer>
+            ) : (
+                <TemporaryDrawer open={open} handleDrawerClose={handleDrawerClose}>
+                    {listD()}
+                </TemporaryDrawer>
+            )}
+
+        </>
+
 
     );
 }

@@ -119,7 +119,6 @@ const ChatForm = () => {
         <>
             <Box
                 sx={{
-                    cursor: 'pointer',
                     "&:hover": {
                         backgroundColor: 'rgba(0,0,0,0.1)',
                     }

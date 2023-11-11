@@ -23,7 +23,7 @@ const PermanentDrawer = ({ children }: { children: React.ReactNode }) => {
             sx={{
                 width: drawerWidth,
                 flexShrink: 0,
-                zIndex: 1000,
+                zIndex: 900,
                 [`& .MuiDrawer-paper`]: {
                     width: drawerWidth,
                     boxSizing: 'border-box',
