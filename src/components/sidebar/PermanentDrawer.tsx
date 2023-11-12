@@ -29,6 +29,7 @@ const PermanentDrawer = ({ children }: { children: React.ReactNode }) => {
                     boxSizing: 'border-box',
                     backgroundColor: '#0e0f30'
                 },
+                display: { xs: 'none', sm: 'block' },
             }}
         >
             <Toolbar />

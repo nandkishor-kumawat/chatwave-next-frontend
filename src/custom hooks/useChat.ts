@@ -11,134 +11,58 @@ import {
     START_TYPING_MESSAGE_EVENT,
     STOP_TYPING_MESSAGE_EVENT
 } from '@/constants/eventconst';
+import { useAppDispatch } from "@/redux/store";
+import { setCurrentUser } from "@/redux/features/userSlice";
 
-export default function useChat(roomId: string) {
+
+export default function useChat() {
     const [messages, setMessages] = useState<Message[]>([]);
-    const [users, setUsers] = useState<User[]>([]);
+    const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
     const [typingUsers, setTypingUsers] = useState<any[]>([]);
     const [user, setUser] = useState<UserData>();
     const socketRef = useRef<any>();
 
-    // useEffect(() => {
-    //     const fetchUser = async () => {
-    //       const response = await fetch("https://api.randomuser.me/").then(res=>res.json());
-    //       const result = response.results[0];
-    //       setUser({
-    //         name: result.name.first,
-    //         picture: result.picture.thumbnail,
-    //       });
-    //     };
+    useEffect(() => {
+        console.log(JSON.stringify(onlineUsers, null, 2))
+    }, [onlineUsers])
 
-    //     fetchUser();
-    // }, []);
-
-    // useEffect(() => {
-    //     const fetchUsers = async () => {
-    //       const response = await fetch(
-    //         `/api/rooms/${roomId}/users`
-    //       ).then(res=>res.json());
-    //       const result = response.users;
-    //       setUsers(result);
-    //     };
-
-    //     fetchUsers();
-    // }, [roomId]);
-
-    // useEffect(() => {
-    //     const fetchMessages = async () => {
-    //       const response = await fetch(
-    //         `/api/rooms/${roomId}/messages`
-    //       ).then(res=>res.json());
-    //       const result = response.messages;
-    //       setMessages(result);
-    //     };
-
-    //     fetchMessages();
-    // }, [roomId]);
+    const dispatch = useAppDispatch()
 
     useEffect(() => {
         // if (!user) {
         //   return;
         // }
-        fetch('/api/socket').finally(() => {
-            socketRef.current = io();
-            // socketRef.current = io({
-            //     query: { roomId, name: user.name, picture: user.picture }
-            // });
+        // fetch('/api/socket').finally(() => {
+        socketRef.current = io("http://localhost:4000");
+        // socketRef.current = io({
+        //     query: { roomId, name: user.name, picture: user.picture }
+        // });
 
-            socketRef.current.on("connect", () => {
-                console.log(socketRef.current.id);
-            });
-
-            socketRef.current.on(USER_JOIN_CHAT_EVENT, (user: User) => {
-                // if (user.id === socketRef.current.id) return;
-                setUsers((users) => [...users, user]);
-            });
-
-            socketRef.current.on(USER_LEAVE_CHAT_EVENT, (user: User) => {
-                setUsers((users) => users.filter((u) => u.id !== user.id));
-            });
-
-            // socketRef.current.on(NEW_CHAT_MESSAGE_EVENT, (message: Message) => {
-            //     const incomingMessage = {
-            //       ...message,
-            //       ownedByCurrentUser: message.senderId === socketRef.current.id,
-            //     };
-            //     setMessages((messages) => [...messages, incomingMessage]);
-            // });
-
-            // socketRef.current.on(START_TYPING_MESSAGE_EVENT, (typingInfo: TypingInfo) => {
-            //     if (typingInfo.senderId !== socketRef.current.id) {
-            //       const user = typingInfo.user;
-            //       setTypingUsers((users) => [...users, user]);
-            //     }
-            // });
-
-            // socketRef.current.on(STOP_TYPING_MESSAGE_EVENT, (typingInfo: TypingInfo) => {
-            //     if (typingInfo.senderId !== socketRef.current.id) {
-            //       const user = typingInfo.user;
-            //       setTypingUsers((users) => users.filter((u) => u.name !== user.name));
-            //     }
-            // });
-
-            return () => {
-                socketRef.current.disconnect();
-            };
+        socketRef.current.on("connect", () => {
+            console.log(socketRef.current.id, 'in client');
+            dispatch(setCurrentUser({ id: socketRef.current.id }))
         });
+
+        socketRef.current.on('newUserResponse', (users: User[]) => {
+            setOnlineUsers(users);
+        });
+
+
+        return () => {
+            socketRef.current.disconnect();
+        };
+        // });
     }, []);
 
-    const sendMessage = (messageBody: string) => {
-        if (!socketRef.current) return;
-        socketRef.current.emit(NEW_CHAT_MESSAGE_EVENT, {
-            body: messageBody,
-            senderId: socketRef.current.id,
-            user: user,
-        });
-    };
 
-    const startTypingMessage = () => {
+    const userJoin = (room: string | null | undefined) => {
         if (!socketRef.current) return;
-        socketRef.current.emit(START_TYPING_MESSAGE_EVENT, {
-            senderId: socketRef.current.id,
-            user,
-        });
-    };
-
-    const stopTypingMessage = () => {
-        if (!socketRef.current) return;
-        socketRef.current.emit(STOP_TYPING_MESSAGE_EVENT, {
-            senderId: socketRef.current.id,
-            user,
-        });
-    };
+        console.log(room, 1)
+        socketRef.current.emit("newUser", room);
+    }
 
     return {
-        messages,
-        user,
-        users,
-        typingUsers,
-        sendMessage,
-        startTypingMessage,
-        stopTypingMessage,
+        userJoin,
+        onlineUsers
     };
 }      

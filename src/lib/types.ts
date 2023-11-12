@@ -4,10 +4,12 @@ export interface UserData {
 }
 
 export interface User {
+    email: string;
     id: string;
-    room: string;
-    name: string;
-    picture: string;
+    typing: {
+        status: boolean;
+        to: string | null;
+    }
 }
 
 export interface TypingInfo {

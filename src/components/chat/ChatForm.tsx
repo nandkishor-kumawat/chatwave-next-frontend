@@ -1,3 +1,4 @@
+"use client"
 import { Skeleton, Box, Stack, Avatar, Typography, Divider, ListItem, ListItemButton, ListItemIcon, FormControl, InputLabel, Input, FormHelperText, Button } from '@mui/material'
 import React, { useEffect } from 'react'
 import { alpha, styled } from '@mui/material/styles';
@@ -100,9 +101,10 @@ const ChatForm = () => {
 
     const dispatch = useAppDispatch();
     const message = useAppSelector((state) => state.user.message);
+    const user = useAppSelector((state) => state.user.secondUser)
 
     useEffect(() => {
-        console.log(message)
+        // console.log(message)
     }, [message])
     
 
@@ -163,4 +165,4 @@ const ChatForm = () => {
 }
 
 
-export default ChatForm
+export default React.memo(ChatForm)

@@ -40,7 +40,7 @@ const TemporaryDrawer = ({ open, handleDrawerClose, children }: Props) => {
                     top: '120px',
                     left: '-10px',
                     zIndex: 1000,
-                    // display: { sm: 'none', xs: 'block' },
+                    display: { sm: 'none', xs: 'block' },
                 }}
             >
                 <IconButton onClick={handleDrawerClose} sx={{

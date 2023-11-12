@@ -1,10 +1,21 @@
+'use client'
 import { Skeleton, Box, Stack, Avatar, Typography, Divider, ListItem, ListItemButton, ListItemIcon } from '@mui/material'
 import React from 'react'
+import { User } from "@/lib/types";
+import { useAppDispatch } from '@/redux/store';
+import { switchUser } from '@/redux/features/userSlice';
 
 
+type propTypes = {
+    user: User
+}
 
-const UserCard = ({ open }: { open: boolean }) => {
-    if (false) {
+const UserCard = ({ user }: propTypes) => {
+
+    const dispatch = useAppDispatch()
+
+
+    if (!user) {
         return (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: '2px', padding: '0 5px' }}>
                 <Skeleton variant="circular" width={40} height={40} />
@@ -12,32 +23,8 @@ const UserCard = ({ open }: { open: boolean }) => {
             </Box>
         )
     }
-    // return (
-    //     <ListItem disablePadding sx={{ display: 'block' }}>
-    //         <ListItemButton
-    //             sx={{
-    //                 minHeight: 48,
-    //                 justifyContent: open ? 'initial' : 'center',
-    //                 px: 2.5,
-    //             }}
-    //         >
-    //             <ListItemIcon
-    //                 sx={{
-    //                     minWidth: 0,
-    //                     mr: open ? 3 : 'auto',
-    //                     justifyContent: 'center',
-    //                 }}
-    //             >
-    //                 <Avatar alt="Remy Sharp" src="https://mui.com/static/images/avatar/1.jpg" />
-    //             </ListItemIcon>
-    //             {/* <ListItemText primary={text}  /> */}
-    //             {open && <Stack>
-    //                 <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'white' }}>Remy Sharp</Typography>
-    //                 <Typography variant="caption" sx={{ color: '#ccc' }}>Remy Sharp</Typography>
-    //             </Stack>}
-    //         </ListItemButton>
-    //     </ListItem>
-    // )
+
+
 
     return (
         <>
@@ -49,15 +36,16 @@ const UserCard = ({ open }: { open: boolean }) => {
                         backgroundColor: 'rgba(0,0,0,0.1)',
                     }
                 }}
+                onClick={() => dispatch(switchUser(user))}
             >
                 <Stack p={1} direction="row" alignItems="center" useFlexGap gap={2} >
                     <Avatar alt="Remy Sharp" src="https://mui.com/static/images/avatar/1.jpg" />
                     <Stack>
-                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'white' }}>Remy Sharp</Typography>
-                        <Typography variant="caption" sx={{ color: '#ccc' }}>Remy Sharp</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'white' }}>{user.id}</Typography>
+                        <Typography variant="caption" sx={{ color: '#ccc' }}>{user.email}</Typography>
                     </Stack>
                 </Stack>
-                
+
                 <Divider color="#434D5B" />
 
             </Box>

@@ -1,8 +1,11 @@
+'use client'
 import { Box } from '@mui/material'
 import React from 'react'
 import ChatBubble from './ChatBubble'
+import { useAppSelector } from '@/redux/store'
 
 const ChatBody = () => {
+    const user = useAppSelector((state) => state.user.secondUser)
     return (
         <Box sx={{
             flex: 1,
