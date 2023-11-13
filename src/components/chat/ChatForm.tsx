@@ -6,6 +6,7 @@ import InputBase from '@mui/material/InputBase';
 import { TextareaAutosize as BaseTextareaAutosize } from '@mui/base/TextareaAutosize';
 import { useAppDispatch, useAppSelector } from '@/redux/store';
 import { setChatMessage } from '@/redux/features/userSlice';
+import useChat from '@/custom hooks/useChat';
 const ChatForm = () => {
     const blue = {
         100: '#DAECFF',
@@ -101,18 +102,25 @@ const ChatForm = () => {
 
     const dispatch = useAppDispatch();
     const message = useAppSelector((state) => state.user.message);
-    const user = useAppSelector((state) => state.user.secondUser)
+    const secondUser = useAppSelector((state) => state.user.secondUser)
+    const currentUser = useAppSelector((state) => state.user.currentUser)
 
+    const { sendMessage } = useChat()
     useEffect(() => {
         // console.log(message)
     }, [message])
-    
+
 
     const handleSubmit = (e: any) => {
         e.preventDefault();
         const msg = e.target.message
         // msg.value = 'this is '
-        dispatch(setChatMessage(msg.value))
+        sendMessage({
+            to: secondUser.id,
+            from: currentUser.id,
+            msg: msg.value,
+            time: Date.now()
+        })
 
     }
 

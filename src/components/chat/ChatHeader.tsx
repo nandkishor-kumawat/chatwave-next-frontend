@@ -5,6 +5,7 @@ import React from 'react'
 
 const ChatHeader = () => {
     const user = useAppSelector((state) => state.user.secondUser)
+    if(!user) return null
     return (
         <>
             <Box
@@ -18,7 +19,7 @@ const ChatHeader = () => {
                 <Stack py={1} px={2} direction="row" alignItems="center" useFlexGap gap={2} >
                     <Avatar alt="Remy Sharp" src="https://mui.com/static/images/avatar/1.jpg" />
                     <Stack>
-                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'white' }}>{user.id}</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'white' }}>{user?.name}</Typography>
                         <Typography variant="caption" sx={{ color: '#ccc' }}>Online</Typography>
                     </Stack>
                 </Stack>

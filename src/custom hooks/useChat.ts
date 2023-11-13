@@ -11,32 +11,30 @@ import {
     START_TYPING_MESSAGE_EVENT,
     STOP_TYPING_MESSAGE_EVENT
 } from '@/constants/eventconst';
-import { useAppDispatch } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { setCurrentUser } from "@/redux/features/userSlice";
 
 
 export default function useChat() {
-    const [messages, setMessages] = useState<Message[]>([]);
+    // const [messages, setMessages] = useState<Message[]>([]);
+    const [messages, setMessages] = useState<any>([]);
     const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
     const [typingUsers, setTypingUsers] = useState<any[]>([]);
     const [user, setUser] = useState<UserData>();
     const socketRef = useRef<any>();
+    const currentUser = useAppSelector((state) => state.user.currentUser);
 
     useEffect(() => {
-        console.log(JSON.stringify(onlineUsers, null, 2))
-    }, [onlineUsers])
+        console.log(JSON.stringify(messages, null, 2))
+    }, [messages])
 
     const dispatch = useAppDispatch()
 
     useEffect(() => {
-        // if (!user) {
-        //   return;
-        // }
+        if (!currentUser) return;
         // fetch('/api/socket').finally(() => {
         socketRef.current = io("http://localhost:4000");
-        // socketRef.current = io({
-        //     query: { roomId, name: user.name, picture: user.picture }
-        // });
+
 
         socketRef.current.on("connect", () => {
             console.log(socketRef.current.id, 'in client');
@@ -45,8 +43,12 @@ export default function useChat() {
 
         socketRef.current.on('newUserResponse', (users: User[]) => {
             setOnlineUsers(users);
+            console.log(users)
         });
 
+        socketRef.current.on('message', (data: any) => {
+            setMessages((prev: any) => ([...prev, data]));
+        });
 
         return () => {
             socketRef.current.disconnect();
@@ -55,14 +57,20 @@ export default function useChat() {
     }, []);
 
 
-    const userJoin = (room: string | null | undefined) => {
+    const userJoin = (name: any) => {
         if (!socketRef.current) return;
-        console.log(room, 1)
-        socketRef.current.emit("newUser", room);
+        socketRef.current.emit("newUser", name);
+    }
+
+    const sendMessage = (data: any) => {
+        if (!socketRef.current) return;
+        socketRef.current.emit("message", data);
     }
 
     return {
         userJoin,
-        onlineUsers
+        onlineUsers,
+        sendMessage,
+        messages
     };
 }      

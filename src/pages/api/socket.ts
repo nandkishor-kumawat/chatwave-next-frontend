@@ -51,7 +51,8 @@ function ioHandler(req: NextApiRequest, res: NextApiResponse) {
           typing: {
             status: false,
             to: null
-          }
+          },
+          name: ''
         });
         socket.join(email);
         console.log(socket.rooms)

@@ -41,7 +41,7 @@ const UserCard = ({ user }: propTypes) => {
                 <Stack p={1} direction="row" alignItems="center" useFlexGap gap={2} >
                     <Avatar alt="Remy Sharp" src="https://mui.com/static/images/avatar/1.jpg" />
                     <Stack>
-                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'white' }}>{user.id}</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'white' }}>{user.name}</Typography>
                         <Typography variant="caption" sx={{ color: '#ccc' }}>{user.email}</Typography>
                     </Stack>
                 </Stack>

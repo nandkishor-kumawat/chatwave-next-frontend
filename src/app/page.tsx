@@ -10,8 +10,10 @@ import ChatContainer from '@/components/chat/ChatContainer';
 import Navbar from '@/components/Navbar';
 import useWindowSize from '@/custom hooks/useWindowSize';
 import useChat from '@/custom hooks/useChat';
-import { useSearchParams } from 'next/navigation';
-import { useAppSelector } from '@/redux/store';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useAppDispatch, useAppSelector } from '@/redux/store';
+import { auth } from '@/firebase';
+import { setCurrentUser } from '@/redux/features/userSlice';
 
 
 export default function Home() {
@@ -26,25 +28,41 @@ export default function Home() {
   //     socket.disconnect()
   //   }
   // }, [])
-  const {
-    userJoin
-  } = useChat()
   const params = useSearchParams()
+  const name = params?.get('name')
+  const roomId = params?.get('room')
+  const { userJoin } = useChat()
+  const size = useWindowSize();
+  const secondUser = useAppSelector((state) => state.user.secondUser);
+  const currentUser = useAppSelector((state) => state.user.currentUser);
+  const dispatch = useAppDispatch();
+  const router = useRouter()
 
 
   useEffect(() => {
-    console.log(params?.get('name'))
-    const name = params?.get('name')
-    userJoin(name);
+    auth.onAuthStateChanged((user) => {
 
+      if (user) {
+        dispatch(setCurrentUser({
+          uid: user.uid,
+          email: user.email,
+          name: user.displayName,
+          photoUrl: user.photoURL
+        }))
+        userJoin(user.displayName);
+      }else{
+        router.push('/login')
+      }
+    })
   }, [])
 
 
 
 
 
-  const size = useWindowSize();
-  const secondUser = useAppSelector((state) => state.user.secondUser)
+
+
+
 
   return (
     <>
@@ -52,7 +70,7 @@ export default function Home() {
 
         <SideBar size={size} />
 
-       {secondUser ? <ChatContainer /> : null}
+        {secondUser ? <ChatContainer /> : null}
 
       </Box>
     </>
