@@ -2,7 +2,7 @@
 import { Skeleton, Box, Stack, Avatar, Typography, Divider, ListItem, ListItemButton, ListItemIcon } from '@mui/material'
 import React from 'react'
 import { User } from "@/lib/types";
-import { useAppDispatch } from '@/redux/store';
+import { useAppDispatch, useAppSelector } from '@/redux/store';
 import { switchUser } from '@/redux/features/userSlice';
 
 
@@ -13,7 +13,7 @@ type propTypes = {
 const UserCard = ({ user }: propTypes) => {
 
     const dispatch = useAppDispatch()
-
+    const secondUser = useAppSelector((state) => state.user.secondUser)
 
     if (!user) {
         return (
@@ -32,8 +32,9 @@ const UserCard = ({ user }: propTypes) => {
                 px={1}
                 sx={{
                     cursor: 'pointer',
+                    backgroundColor: user.id === secondUser?.id ? 'rgb(38 54 93 / 50%)' : null,
                     "&:hover": {
-                        backgroundColor: 'rgba(0,0,0,0.1)',
+                        backgroundColor: 'rgb(38 54 93 / 30%)',
                     }
                 }}
                 onClick={() => dispatch(switchUser(user))}

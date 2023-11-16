@@ -1,6 +1,6 @@
 'use client'
 /* eslint-disable react-hooks/exhaustive-deps */
-import useChat from "@/custom hooks/useChat";
+
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef, FormEvent } from "react";
 
@@ -15,7 +15,7 @@ export default function ChatRoom() {
 
     const [name, setName] = useState('')
 
-const router = useRouter();
+    const router = useRouter();
 
 
     return (

@@ -1,11 +1,15 @@
-'use client'
 import { useAppSelector } from '@/redux/store'
 import { Skeleton, Box, Stack, Avatar, Typography, Divider, ListItem, ListItemButton, ListItemIcon } from '@mui/material'
 import React from 'react'
 
-const ChatHeader = () => {
+type PropTypes = {
+    onlineUsers: any;
+    typingUsers: any;
+}
+
+const ChatHeader = ({onlineUsers, typingUsers}: PropTypes) => {
     const user = useAppSelector((state) => state.user.secondUser)
-    if(!user) return null
+    // if(!user) return null
     return (
         <>
             <Box

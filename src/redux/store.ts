@@ -2,7 +2,7 @@
 
 import counterReducer from "./features/counterSlice";
 import userReducer from "./features/userSlice";
-
+import logger from 'redux-logger'
 
  import { combineReducers, configureStore } from "@reduxjs/toolkit";
  import { useDispatch, TypedUseSelectorHook, useSelector } from "react-redux";
@@ -14,7 +14,7 @@ import storage from "./storage";
  const authPersistConfig = {
    key: "root",
    storage: storage,
-   whitelist: ["secondUser"],
+   whitelist: ["secondUser",'currentUser'],
  };
  
  const rootReducer = combineReducers({

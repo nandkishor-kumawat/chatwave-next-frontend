@@ -1,4 +1,3 @@
-"use client"
 import { Skeleton, Box, Stack, Avatar, Typography, Divider, ListItem, ListItemButton, ListItemIcon, FormControl, InputLabel, Input, FormHelperText, Button } from '@mui/material'
 import React, { useEffect } from 'react'
 import { alpha, styled } from '@mui/material/styles';
@@ -6,8 +5,13 @@ import InputBase from '@mui/material/InputBase';
 import { TextareaAutosize as BaseTextareaAutosize } from '@mui/base/TextareaAutosize';
 import { useAppDispatch, useAppSelector } from '@/redux/store';
 import { setChatMessage } from '@/redux/features/userSlice';
-import useChat from '@/custom hooks/useChat';
-const ChatForm = () => {
+
+
+type PropTypes = {
+    sendMessage: (data: any) => void
+}
+
+const ChatForm = ({sendMessage}: PropTypes) => {
     const blue = {
         100: '#DAECFF',
         200: '#b6daff',
@@ -105,10 +109,6 @@ const ChatForm = () => {
     const secondUser = useAppSelector((state) => state.user.secondUser)
     const currentUser = useAppSelector((state) => state.user.currentUser)
 
-    const { sendMessage } = useChat()
-    useEffect(() => {
-        // console.log(message)
-    }, [message])
 
 
     const handleSubmit = (e: any) => {
@@ -119,7 +119,7 @@ const ChatForm = () => {
             to: secondUser.id,
             from: currentUser.id,
             msg: msg.value,
-            time: Date.now()
+            sentAt: Date.now()
         })
 
     }
@@ -127,13 +127,7 @@ const ChatForm = () => {
 
     return (
         <>
-            <Box
-                sx={{
-                    "&:hover": {
-                        backgroundColor: 'rgba(0,0,0,0.1)',
-                    }
-                }}
-            >
+            <Box className='w-full pt-2 h-[60px]'>
                 <Divider color="#434D5B" />
 
                 <form onSubmit={handleSubmit}>

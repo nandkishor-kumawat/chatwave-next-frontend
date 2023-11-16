@@ -5,23 +5,22 @@ import UserCard from '../UserCard';
 import PermanentDrawer from './PermanentDrawer';
 import useWindowSize, { Size } from '@/custom hooks/useWindowSize';
 import TemporaryDrawer from './TemporaryDrawer';
-import useChat from '@/custom hooks/useChat';
 import { useAppSelector } from '@/redux/store';
+import { Box } from '@mui/material';
 
 
 
-type Props = {
-    // open: boolean
-    // handleDrawerClose: () => void,
-    size: Size
+type PropTypes = {
+    changeRoom: (room: string) => void;
+    onlineUsers: any[];
+    typingUsers: any[];
 }
 
 
-export default function MiniDrawer({ size }: Props) {
+export default function SideBar({ changeRoom, onlineUsers, typingUsers }: PropTypes) {
 
     const [open, setOpen] = React.useState<boolean>(false);
-    const { onlineUsers } = useChat()
-    const currentUser = useAppSelector(state => state.user.currentUser)
+    const currentUser = useAppSelector(state => state.user.currentUser);
 
 
     const handleDrawerOpen = () => {
@@ -33,14 +32,14 @@ export default function MiniDrawer({ size }: Props) {
     };
 
     const listD = () => (
-        <List>
-            {onlineUsers.filter((user) => user.id !== currentUser?.id).map((user, index) => (
+        <Box>
+            {onlineUsers.filter((user) => user.id !== currentUser.id).map((user, index) => (
                 <UserCard key={index} user={user} />
             ))}
             {/* {Array.from(new Array(24)).map((_, index) => (
-                <UserCard key={index} name={name} />
+                <UserCard key={index} user={{ id: 'loading', name: 'loading', email: 'loading' }} />
             ))} */}
-        </List>
+        </Box>
     )
 
 

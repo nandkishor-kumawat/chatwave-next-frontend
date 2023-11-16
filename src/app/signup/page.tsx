@@ -5,43 +5,11 @@ import { Button, TextField, Container, Typography, Paper, FormControl, InputLabe
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { FcGoogle } from 'react-icons/fc';
+import { GoogleAuthProvider, getRedirectResult, signInWithRedirect } from 'firebase/auth';
+import { auth } from '@/firebase';
+import { containerStyle, inputStyles, labelStyle, paperStyle } from '../login/styles';
 
 function SignUp() {
-    const containerStyle = {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flex: 1,
-    };
-
-    const paperStyle = {
-        padding: '2rem 4rem',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        backgroundColor: 'rgb(255 255 255 / 5%)',
-        color: '#fff',
-        // background: 'rgba(255, 255, 255, 0)',
-        borderRadius: '16px',
-        boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
-        backdropFilter: 'blur(2.9px)',
-        // - webkit - backdrop - filter: blur(2.9px);
-        border: '1px solid rgba(255, 255, 255, 0.3)'
-    };
-
-    const formStyle = {
-        width: '100%',
-        marginTop: '1rem',
-    };
-
-    const inputStyle = {
-
-        color: 'white',
-        backgroundColor: 'rgb(255 255 255 / 5%)',
-        border: '1px solid rgba(255, 255, 255, 0.3)',
-
-
-    };
 
     const [name, setName] = useState<string>('')
     const [email, setEmail] = useState<string>('')
@@ -50,17 +18,36 @@ function SignUp() {
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [showPassword2, setShowPassword2] = useState<boolean>(false);
 
+    const signInWithGoogle = () => {
+        const provider = new GoogleAuthProvider();
+        signInWithRedirect(auth, provider);
+        getRedirectResult(auth)
+            .then((result) => {
+                const credential = result && GoogleAuthProvider.credentialFromResult(result);
+                const token = credential?.accessToken;
+                const user = result?.user;
+                console.log(user)
+            }).catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                const email = error.customData.email;
+                const credential = GoogleAuthProvider.credentialFromError(error);
+            });
+    }
 
     return (
-        <Container component="main"  sx={containerStyle} className='max-w-3xl'>
+        <Container component="main" sx={containerStyle} className='max-w-2xl h-full m-auto' >
             <Paper elevation={3} sx={paperStyle}>
                 <Typography variant="h5">Create your account</Typography>
-                <form style={formStyle}>
+                <form style={{
+                    width: '100%',
+                    marginTop: '1rem',
+                }}>
 
                     <FormControl sx={{ width: '100%', my: 1 }} variant="filled">
-                        <InputLabel sx={{ color: 'white' }} htmlFor="filled-adornment-name">Name</InputLabel>
+                        <InputLabel sx={labelStyle} htmlFor="filled-adornment-name">Name</InputLabel>
                         <FilledInput
-                            sx={inputStyle}
+                            sx={inputStyles}
                             id="filled-adornment-name"
                             type='text'
                             value={name}
@@ -71,9 +58,9 @@ function SignUp() {
                     </FormControl>
 
                     <FormControl sx={{ width: '100%', my: 1 }} variant="filled">
-                        <InputLabel sx={{ color: 'white' }} htmlFor="filled-adornment-email">Email</InputLabel>
+                        <InputLabel sx={labelStyle} htmlFor="filled-adornment-email">Email</InputLabel>
                         <FilledInput
-                            sx={inputStyle}
+                            sx={inputStyles}
                             id="filled-adornment-email"
                             type='email'
                             value={email}
@@ -84,9 +71,9 @@ function SignUp() {
                     </FormControl>
 
                     <FormControl sx={{ width: '100%', my: 1 }} variant="filled">
-                        <InputLabel sx={{ color: 'white' }} htmlFor="filled-adornment-password">Password</InputLabel>
+                        <InputLabel sx={labelStyle} htmlFor="filled-adornment-password">Password</InputLabel>
                         <FilledInput
-                            sx={inputStyle}
+                            sx={inputStyles}
                             id="filled-adornment-password"
                             type={showPassword ? 'text' : 'password'}
                             endAdornment={
@@ -109,9 +96,9 @@ function SignUp() {
                     </FormControl>
 
                     <FormControl sx={{ width: '100%', my: 1 }} variant="filled">
-                        <InputLabel sx={{ color: 'white' }} htmlFor="filled-adornment-confirm-password">Confirm Password</InputLabel>
+                        <InputLabel sx={labelStyle} htmlFor="filled-adornment-confirm-password">Confirm Password</InputLabel>
                         <FilledInput
-                            sx={inputStyle}
+                            sx={inputStyles}
                             id="filled-adornment-confirm-password"
                             type={showPassword2 ? 'text' : 'password'}
                             endAdornment={
@@ -141,14 +128,14 @@ function SignUp() {
                     </Button>
                 </form>
 
-                <div className='flex items-center justify-center'>
+                {/* <div className='flex items-center justify-center'>
                     <div className="flex items-center justify-center gap-2 border border-gray-500 p-2 rounded-md cursor-pointer hover:bg-gray-500 hover:bg-opacity-10 transition-colors duration-300 ease-in-out"
-                        // onClick={signInWithGoogle}
+                    onClick={signInWithGoogle}
                     >
                         <FcGoogle />
                         <span>Sign in with google</span>
                     </div>
-                </div>
+                </div> */}
             </Paper>
         </Container>
     );

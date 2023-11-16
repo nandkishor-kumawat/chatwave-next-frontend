@@ -1,7 +1,7 @@
 'use client'
 // import socket from '@/socket';
 import Image from 'next/image'
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import SideBar from '@/components/sidebar/SideBar';
@@ -9,29 +9,29 @@ import { Box, Container, IconButton } from '@mui/material';
 import ChatContainer from '@/components/chat/ChatContainer';
 import Navbar from '@/components/Navbar';
 import useWindowSize from '@/custom hooks/useWindowSize';
-import useChat from '@/custom hooks/useChat';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/redux/store';
 import { auth } from '@/firebase';
 import { setCurrentUser } from '@/redux/features/userSlice';
-
+import useChat from '@/custom hooks/useChat';
 
 export default function Home() {
 
-  // useEffect(() => {
-  //   socket.connect()
-  //   socket.emit('newUser', 'currentUser');
-  //   socket.on('newUserResponse', (users) => {
-  //     console.log(JSON.stringify(users, null, 2))
-  //   });
-  //   return () => {
-  //     socket.disconnect()
-  //   }
-  // }, [])
-  const params = useSearchParams()
-  const name = params?.get('name')
-  const roomId = params?.get('room')
-  const { userJoin } = useChat()
+  const params = useSearchParams();
+  const name = params?.get('name');
+  const roomId = params?.get('room');
+
+  const {
+    messages,
+    onlineUsers,
+    typingUsers,
+    user,
+    userJoin,
+    sendMessage,
+    changeRoom
+  } = useChat();
+
+
   const size = useWindowSize();
   const secondUser = useAppSelector((state) => state.user.secondUser);
   const currentUser = useAppSelector((state) => state.user.currentUser);
@@ -49,28 +49,31 @@ export default function Home() {
           name: user.displayName,
           photoUrl: user.photoURL
         }))
-        userJoin(user.displayName);
-      }else{
-        router.push('/login')
+      } else {
+        // router.push('/login')
       }
     })
+
   }, [])
-
-
-
-
-
 
 
 
 
   return (
     <>
-      <Box sx={{ display: 'flex' }}>
+      <Box className='relative z-0 flex h-full w-full overflow-hidden'>
 
-        <SideBar size={size} />
+        <SideBar changeRoom={changeRoom} onlineUsers={onlineUsers} typingUsers={typingUsers} />
 
-        {secondUser ? <ChatContainer /> : null}
+
+
+        {secondUser ? <ChatContainer
+          messages={messages}
+          onlineUsers={onlineUsers}
+          typingUsers={typingUsers}
+          user={user}
+          sendMessage={sendMessage}
+        /> : null}
 
       </Box>
     </>

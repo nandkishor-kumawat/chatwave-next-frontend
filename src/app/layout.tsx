@@ -1,10 +1,8 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import { Providers } from '@/redux/Provider'
 
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -19,13 +17,18 @@ export default function RootLayout({
   return (
 
     <html lang="en">
-      <body className={inter.className}>
+      <body>
 
         <Providers>
-          <Navbar />
-          {children}
-        </Providers>
 
+          <div className="h-full">
+            <Navbar />
+            <div style={{ height: 'calc(100% - 56px)' }}>
+              {children}
+            </div>
+          </div>
+
+        </Providers>
       </body>
     </html>
 

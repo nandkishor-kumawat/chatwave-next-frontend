@@ -39,7 +39,7 @@ function Navbar() {
   };
 
   return (
-    <AppBar position="sticky" sx={{ backgroundColor: '#0f2749' }}>
+    <AppBar position="sticky" sx={{ backgroundColor: '#0f2749',height:'56px' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Box sx={{ flex: 1, display:'flex', alignItems:'center' }}>
@@ -79,7 +79,7 @@ function Navbar() {
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 {/* <Avatar alt="Remy Sharp" src="/vercel.svdg" /> */}
-                <AccountCircleIcon sx={{ color: 'white', fontSize: '40px' }} />
+                <AccountCircleIcon sx={{ color: 'white', fontSize: '35px' }} />
               </IconButton>
             </Tooltip>
             <Menu

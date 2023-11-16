@@ -17,7 +17,11 @@ function ioHandler(req: NextApiRequest, res: NextApiResponse) {
 
   let users: User[] = [];
 
-  const addUser = (user:User) => {
+  const addUser = (user: User) => {
+    const index = users.findIndex((u) => u.id === user.id);
+    if (index !== -1) {
+      users.splice(index, 1);
+    }
     users.push(user)
     // users = users.reduce((acc, user) => {
     //   const existingUser = acc.find(u => u.id === user.id && u.email !== null);
@@ -30,8 +34,8 @@ function ioHandler(req: NextApiRequest, res: NextApiResponse) {
 
   const removeUser = (id: String) => {
     const index = users.findIndex((user) => user.id === id);
-
-    users = users.filter(user => user.id !== id);
+    console.log({ index })
+    users.splice(index, 1);
   }
 
   const getUser = (id: string) => users.find((user) => user.id === id);
@@ -41,25 +45,28 @@ function ioHandler(req: NextApiRequest, res: NextApiResponse) {
 
     const io = new Server((res.socket as any).server);
 
-    io.on('connection', (socket) => {
+    io.on('connection', (socket: any) => {
       console.log(socket.id, 'connected')
 
-      socket.on('newUser', (email) => {
+      const { roomId } = socket.handshake.query;
+
+      socket.on('newUser', (name: any) => {
         addUser({
-          email,
+          email: name,
+          name,
           id: socket.id,
           typing: {
             status: false,
             to: null
-          },
-          name: ''
+          }
         });
-        socket.join(email);
-        console.log(socket.rooms)
+        // socket.join(socket.id as string);
+        // io.in(roomId as string).emit('newUserResponse', users);
         io.emit('newUserResponse', users);
+
       });
 
-      socket.on('typing', (from, status, to) => {
+      socket.on('typing', (from: string, status: boolean, to: string) => {
         const user = users.find((user) => user.email === from);
         if (user) {
           user.typing.to = to;
@@ -68,13 +75,23 @@ function ioHandler(req: NextApiRequest, res: NextApiResponse) {
         io.emit('newUserResponse', users);
       });
 
+      socket.on('message', (data: any) => {
+        io.emit('message', data);
+      })
+
+      socket.on('changeRoom', (room: string) => {
+        socket.join(room);
+        console.log(socket.rooms)
+      })
 
       socket.on('disconnect', () => {
         console.log(socket.id, '🔥: A user disconnected');
-        removeUser(socket.id);
+        // removeUser(socket.id as string);
+        // socket.leave(socket.id as string);
         io.emit('newUserResponse', users);
       });
     });
+
 
     (res.socket as any).server.io = io;
   } else {

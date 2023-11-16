@@ -31,6 +31,7 @@ const PermanentDrawer = ({ children }: { children: React.ReactNode }) => {
                 },
                 display: { xs: 'none', sm: 'block' },
             }}
+            className='h-full'
         >
             <Toolbar />
             <Box sx={{ overflow: 'auto' }} className='scrollbar'>

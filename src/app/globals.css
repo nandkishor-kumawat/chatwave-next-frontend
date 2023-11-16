@@ -29,10 +29,12 @@
 html,
 body {
     background-color: rgb(14 15 48 / 75%);
-    display: flex;
+    /* display: flex;
     flex-direction: column;
     height: 100vh;
-    color: white;
+    color: white; */
+    overflow: hidden;
+    height:100%
 }
 
 
