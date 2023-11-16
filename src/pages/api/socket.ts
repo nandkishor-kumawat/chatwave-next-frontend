@@ -86,7 +86,7 @@ function ioHandler(req: NextApiRequest, res: NextApiResponse) {
 
       socket.on('disconnect', () => {
         console.log(socket.id, '🔥: A user disconnected');
-        // removeUser(socket.id as string);
+        removeUser(socket.id as string);
         // socket.leave(socket.id as string);
         io.emit('newUserResponse', users);
       });
