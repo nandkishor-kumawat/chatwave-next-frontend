@@ -40,7 +40,6 @@ const TemporaryDrawer = ({ open, handleDrawerClose, children }: Props) => {
                     top: '120px',
                     left: '-10px',
                     zIndex: 1000,
-                    display: { sm: 'none', xs: 'block' },
                 }}
             >
                 <IconButton onClick={handleDrawerClose} sx={{
@@ -70,9 +69,11 @@ const TemporaryDrawer = ({ open, handleDrawerClose, children }: Props) => {
                     '& .MuiDrawer-paper': {
                         backgroundColor: '#0e0f30',
                         width: drawerWidth
-                    }
+                    },
+                    display: { sm: 'none', xs: 'block' }
                 }}
                 className='scrollbar'
+                
             >
                 <Toolbar sx={{ backgroundColor: 'transparent' }} />
 

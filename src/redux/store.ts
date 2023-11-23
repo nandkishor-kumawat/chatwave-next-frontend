@@ -14,7 +14,7 @@ import storage from "./storage";
  const authPersistConfig = {
    key: "root",
    storage: storage,
-   whitelist: ["secondUser",'currentUser'],
+   whitelist: ["secondUser"],
  };
  
  const rootReducer = combineReducers({

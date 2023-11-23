@@ -19,10 +19,9 @@ import socket from "@/socket";
 
 export default function useChat() {
     // const [messages, setMessages] = useState<Message[]>([]);
-    const [messages, setMessages] = useState<any>([]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
     const [typingUsers, setTypingUsers] = useState<any[]>([]);
-    const [user, setUser] = useState<UserData>();
     const socketRef = useRef<any>();
     const currentUser = useAppSelector((state) => state.user.currentUser);
     const dispatch = useAppDispatch()
@@ -32,19 +31,17 @@ export default function useChat() {
 
 
     useEffect(() => {
-        if (!name) return;
-        console.log(socket.connected)
+        // if (!currentUser) return;
+        // console.log(socket.connected)
         socket.connect()
 
         socket.on("connect", () => {
             console.log(socket.id, 'in client');
-            dispatch(setCurrentUser({ id: socket.id }))
-            socket.emit("newUser", name);
+            socket.emit("newUser", currentUser.email);
         });
 
         socket.on('newUserResponse', (users: User[]) => {
             setOnlineUsers(users);
-            console.log(users)
         });
 
         socket.on('message', (data: any) => {
@@ -52,7 +49,7 @@ export default function useChat() {
         });
 
         socket.on('disconnect', () => {
-            console.log('disconnected--->', socket.id)
+            // console.log('disconnected--->', socket.id)
         });
 
 
@@ -85,8 +82,6 @@ export default function useChat() {
         messages,
         onlineUsers,
         typingUsers,
-        user,
-
         userJoin,
         sendMessage,
         changeRoom

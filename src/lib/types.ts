@@ -19,18 +19,25 @@ export interface TypingInfo {
 }
 
 export interface MessageData {
-    body: string;
-    senderId: string;
-    user: UserData;
+    body?: {
+        type: string;
+        content: string;
+    };
+    message: string;
+    sender_id: string;
+    receiver_id: string;
 }
+
 
 export interface Message {
     id: string;
-    room: string;
-    body: string;
-    senderId: string;
-    user: UserData;
+    sender_id: string;
+    receiver_id: string;
+    body?: {
+        type: string;
+        content: string;
+    };
+    message: string;
     sentAt: number;
-    ownedByCurrentUser?: boolean;
+    room?: string;
 }
-

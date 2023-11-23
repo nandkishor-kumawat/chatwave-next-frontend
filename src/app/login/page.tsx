@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from 'react';
-import { Button, TextField, Container, Typography, Paper, FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton, FilledInput, CircularProgress } from '@mui/material';
+import { Button, TextField, Container, Typography, Paper, FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton, FilledInput, CircularProgress, Box } from '@mui/material';
 import { GoogleAuthProvider, getRedirectResult, signInWithEmailAndPassword, signInWithPopup, signInWithRedirect } from 'firebase/auth';
 import { auth } from '@/firebase';
 import Visibility from '@mui/icons-material/Visibility';
@@ -121,14 +121,14 @@ function Login() {
 
                     </Button>
 
-                    {/* <div className='flex items-center justify-center'>
-                        <div className="flex items-center justify-center gap-2 border border-gray-500 p-2 rounded-md cursor-pointer hover:bg-gray-500 hover:bg-opacity-10 transition-colors duration-300 ease-in-out"
+                    {/* <Box className='flex items-center justify-center'>
+                        <Box className="flex items-center justify-center gap-2 border border-gray-500 p-2 rounded-md cursor-pointer hover:bg-gray-500 hover:bg-opacity-10 transition-colors duration-300 ease-in-out"
                         onClick={signInWithGoogle}
                         >
                             <FcGoogle />
-                            <span>Sign in with google</span>
-                        </div>
-                    </div> */}
+                            <Typography>Sign in with google</Typography>
+                        </Box>
+                    </Box> */}
                 </form>
 
             </Paper>

@@ -7,8 +7,11 @@ export const inputStyles = {
 export const labelStyle = {
     color: 'white',
     '&.Mui-focused': {
-        color: 'white',
+        color: '#3ab0ef',
     },
+    '&.MuiFormLabel-filled':{
+        color: '#3ab0ef',
+    }
 };
 
 export const containerStyle = {

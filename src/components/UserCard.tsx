@@ -4,13 +4,20 @@ import React from 'react'
 import { User } from "@/lib/types";
 import { useAppDispatch, useAppSelector } from '@/redux/store';
 import { switchUser } from '@/redux/features/userSlice';
+import StyledBadge from './styled/StyledBadge';
+
 
 
 type propTypes = {
-    user: User
+    user: {
+        id: string;
+        name: string;
+        email: string;
+    },
+    isOnline: boolean;
 }
 
-const UserCard = ({ user }: propTypes) => {
+const UserCard = ({ user, isOnline }: propTypes) => {
 
     const dispatch = useAppDispatch()
     const secondUser = useAppSelector((state) => state.user.secondUser)
@@ -23,7 +30,6 @@ const UserCard = ({ user }: propTypes) => {
             </Box>
         )
     }
-
 
 
     return (
@@ -40,7 +46,16 @@ const UserCard = ({ user }: propTypes) => {
                 onClick={() => dispatch(switchUser(user))}
             >
                 <Stack p={1} direction="row" alignItems="center" useFlexGap gap={2} >
-                    <Avatar alt="Remy Sharp" src="https://mui.com/static/images/avatar/1.jpg" />
+
+                    <StyledBadge
+                        overlap="circular"
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                        variant="dot"
+                        invisible={!isOnline}
+                    >
+                        <Avatar alt={user.name.toUpperCase()} src="https://mui.com/static/images/avatar/1.jpg" />
+                    </StyledBadge>
+
                     <Stack>
                         <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'white' }}>{user.name}</Typography>
                         <Typography variant="caption" sx={{ color: '#ccc' }}>{user.email}</Typography>

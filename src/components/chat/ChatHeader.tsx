@@ -8,8 +8,10 @@ type PropTypes = {
 }
 
 const ChatHeader = ({onlineUsers, typingUsers}: PropTypes) => {
-    const user = useAppSelector((state) => state.user.secondUser)
-    // if(!user) return null
+    const secondUser = useAppSelector((state) => state.user.secondUser);
+    const isOnline = onlineUsers.find((user: any) => user.email === secondUser.email);
+    const isTyping = typingUsers.find((user: any) => user.email === secondUser.email);
+    // if(!secondUser) return null
     return (
         <>
             <Box
@@ -23,12 +25,11 @@ const ChatHeader = ({onlineUsers, typingUsers}: PropTypes) => {
                 <Stack py={1} px={2} direction="row" alignItems="center" useFlexGap gap={2} >
                     <Avatar alt="Remy Sharp" src="https://mui.com/static/images/avatar/1.jpg" />
                     <Stack>
-                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'white' }}>{user?.name}</Typography>
-                        <Typography variant="caption" sx={{ color: '#ccc' }}>Online</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'white' }}>{secondUser?.name}</Typography>
+                        {isOnline ? <Typography variant="caption" sx={{ color: '#51ff51' }}>Online</Typography> : null}
                     </Stack>
                 </Stack>
                 <Divider color="#434D5B" />
-
             </Box>
         </>
     )

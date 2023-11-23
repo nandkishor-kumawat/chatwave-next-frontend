@@ -1,28 +1,30 @@
 import { useAppSelector } from '@/redux/store'
+import { Box } from '@mui/material'
 import React from 'react'
 
 
-const ChatBubble = ({ message }:any) => {
+const ChatBubble = ({ message }: any) => {
     const secondUser = useAppSelector((state) => state.user.secondUser)
     //chat-start || chat-end
-    const type = message.from === secondUser.id ? 'start' : 'end'
+    const type = message.sender_id === secondUser.email ? 'start' : 'end'
+    console.log({ message })
     return (
         <>
-            <div className={`chat chat-${type}`}>
-                {/* <div className="chat-image avatar">
-                    <div className="w-10 rounded-full">
+            <Box className={`chat chat-${type}`}>
+                {/* <Box className="chat-image avatar">
+                    <Box className="w-10 rounded-full">
                         <img src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
-                    </div>
-                </div> */}
-                <div className="chat-header">
+                    </Box>
+                </Box> */}
+                <Box className="chat-header">
                     {/* Obi-Wan Kenobi */}
                     <time className="text-xs opacity-50 text-white">{message.sentAt}</time>
-                </div>
-                <div className="chat-bubble">{message.msg}</div>
-                {/* <div className="chat-footer opacity-50">
+                </Box>
+                <Box className="chat-bubble">{message.message}</Box>
+                {/* <Box className="chat-footer opacity-50">
                     Delivered
-                </div> */}
-            </div>
+                </Box> */}
+            </Box>
         </>
     )
 }
