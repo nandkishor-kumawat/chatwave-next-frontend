@@ -50,21 +50,21 @@ function ioHandler(req: NextApiRequest, res: NextApiResponse) {
 
       const { roomId } = socket.handshake.query;
 
-      socket.on('newUser', (name: any) => {
+      socket.on('newUser', (email:string) => {
         addUser({
-          email: name,
-          name,
-          id: socket.id,
-          typing: {
-            status: false,
-            to: null
-          }
+            email: email,
+            name:email.split('@')[0],
+            id: socket.id,
+            typing: {
+                status: false,
+                to: null
+            }
         });
         // socket.join(socket.id as string);
         // io.in(roomId as string).emit('newUserResponse', users);
         io.emit('newUserResponse', users);
 
-      });
+    });
 
       socket.on('typing', (from: string, status: boolean, to: string) => {
         const user = users.find((user) => user.email === from);
