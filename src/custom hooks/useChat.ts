@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 
 import { UserData, User, TypingInfo, Message } from "@/lib/types";
@@ -14,7 +14,7 @@ import {
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { setCurrentUser } from "@/redux/features/userSlice";
 import { useSearchParams } from "next/navigation";
-import socket from "@/socket";
+// import socket from "@/socket";
 
 
 export default function useChat() {
@@ -29,53 +29,61 @@ export default function useChat() {
     const params = useSearchParams()
     const name = params?.get('name')
 
-
     useEffect(() => {
         // if (!currentUser) return;
         // console.log(socket.connected)
-        socket.connect()
+        fetch('/api/socket').finally(() => {
 
-        socket.on("connect", () => {
-            console.log(socket.id, 'in client');
-            socket.emit("newUser", currentUser.email);
-        });
+            socketRef.current = io('/', {
+                autoConnect: false
+            });
 
-        socket.on('newUserResponse', (users: User[]) => {
-            setOnlineUsers(users);
-        });
-
-        socket.on('message', (data: any) => {
-            setMessages((prev: any) => [...prev, data]);
-        });
-
-        socket.on('disconnect', () => {
-            // console.log('disconnected--->', socket.id)
-        });
+            socketRef.current.connect()
 
 
-        return () => {
-            if (socket) {
-                socket.disconnect();
-            }
-        };
+            socketRef.current.on("connect", () => {
+                console.log(socketRef.current.id, 'in client');
+                socketRef.current.emit("newUser", currentUser.email);
+            });
+
+            socketRef.current.on('newUserResponse', (users: User[]) => {
+                setOnlineUsers(users);
+            });
+
+            socketRef.current.on('message', (data: any) => {
+                setMessages((prev: any) => [...prev, data]);
+            });
+
+            socketRef.current.on('disconnect', () => {
+                console.log('disconnected--->', socketRef.current.id)
+            });
+
+
+            return () => {
+                if (socketRef.current) {
+                    socketRef.current.disconnect();
+                }
+            };
+        })
     }, []);
 
 
 
     const userJoin = (name: any) => {
-        if (!socket) return;
+        if (!socketRef.current) return;
         console.log('sent')
-        socket.emit("newUser", name);
+        socketRef.current.emit("newUser", name);
     }
 
     const sendMessage = (data: any) => {
-        if (!socket) return;
-        socket.emit("message", data);
+        console.log(socketRef.current)
+        if (!socketRef.current) return;
+        socketRef.current.emit("message", data);
     }
 
     const changeRoom = (room: string) => {
-        if (!socket) return;
-        socket.emit("changeRoom", room);
+        if (!socketRef.current) return;
+        socketRef.current.emit("changeRoom", room);
     }
 
     return {
