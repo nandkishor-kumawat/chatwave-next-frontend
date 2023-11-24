@@ -6,8 +6,7 @@ import React from 'react'
 const ChatBubble = ({ message }: any) => {
     const secondUser = useAppSelector((state) => state.user.secondUser)
     //chat-start || chat-end
-    const type = message.sender_id === secondUser.email ? 'start' : 'end'
-    console.log({ message })
+    const type = message.sender_id === secondUser.email ? 'start' : 'end';
     return (
         <>
             <Box className={`chat chat-${type}`}>
@@ -18,7 +17,7 @@ const ChatBubble = ({ message }: any) => {
                 </Box> */}
                 <Box className="chat-header">
                     {/* Obi-Wan Kenobi */}
-                    <time className="text-xs opacity-50 text-white">{message.sentAt}</time>
+                    <time className="text-xs opacity-50 text-white">{new Date(message.sentAt).toLocaleTimeString()}</time>
                 </Box>
                 <Box className="chat-bubble">{message.message}</Box>
                 {/* <Box className="chat-footer opacity-50">

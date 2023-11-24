@@ -10,6 +10,7 @@ import {
 } from '@/constants/eventconst';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { User } from '@/lib/types';
+import { addMessage } from '@/lib/messages';
 
 function ioHandler(req: NextApiRequest, res: NextApiResponse) {
 
@@ -36,6 +37,7 @@ function ioHandler(req: NextApiRequest, res: NextApiResponse) {
     const index = users.findIndex((user) => user.id === id);
     console.log({ index })
     users.splice(index, 1);
+    // users = users.filter((user) => user.id !== id);
   }
 
   const getUser = (id: string) => users.find((user) => user.id === id);
@@ -48,23 +50,22 @@ function ioHandler(req: NextApiRequest, res: NextApiResponse) {
     io.on('connection', (socket: any) => {
       console.log(socket.id, 'connected')
 
-      const { roomId } = socket.handshake.query;
 
-      socket.on('newUser', (email:string) => {
+      socket.on('newUser', (email: string) => {
         addUser({
-            email: email,
-            name:email.split('@')[0],
-            id: socket.id,
-            typing: {
-                status: false,
-                to: null
-            }
+          email: email,
+          name: email.split('@')[0],
+          id: socket.id,
+          typing: {
+            status: false,
+            to: null
+          }
         });
         // socket.join(socket.id as string);
         // io.in(roomId as string).emit('newUserResponse', users);
         io.emit('newUserResponse', users);
 
-    });
+      });
 
       socket.on('typing', (from: string, status: boolean, to: string) => {
         const user = users.find((user) => user.email === from);

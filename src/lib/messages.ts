@@ -1,11 +1,13 @@
 
 import { Message, MessageData } from "./types";
 
-const messages: Message[] = [];
+let messages: Message[] = [];
 
-export const addMessage = (room: string, message: MessageData) => {
+export const addMessage = (message: MessageData) => {
+    console.log('calling...')
     const msg = { id: String(messages.length + 1), ...message, sentAt: Date.now() };
     messages.push(msg);
+    console.log(JSON.stringify(messages, null, 2))
     return msg;
 };
 
@@ -17,6 +19,9 @@ export const removeMessage = (id: string) => {
 
 export const getMessage = (id: string) => messages.find((message) => message.id === id);
 
-export const getMessagesInRoom = (room: string) =>
-    messages.filter((message) => message.room === room);
+export const getMessages = () => {
+    console.log(messages)
+    return messages;
+};
+    
 

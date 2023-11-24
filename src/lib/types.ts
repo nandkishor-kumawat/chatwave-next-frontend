@@ -39,5 +39,7 @@ export interface Message {
     };
     message: string;
     sentAt: number;
+    deliveredAt?: number;
+    readAt?: number;
     room?: string;
 }

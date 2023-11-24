@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button, TextField, Container, Typography, Paper, FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton, FilledInput, CircularProgress, Box } from '@mui/material';
 import { GoogleAuthProvider, getRedirectResult, signInWithEmailAndPassword, signInWithPopup, signInWithRedirect } from 'firebase/auth';
-import { auth } from '@/firebase';
+import { auth, rdb } from '@/firebase';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useAppDispatch } from '@/redux/store';
@@ -10,6 +10,7 @@ import { setCurrentUser } from '@/redux/features/userSlice';
 import { useRouter } from 'next/navigation';
 import { FcGoogle } from 'react-icons/fc';
 import { containerStyle, inputStyles, labelStyle, paperStyle } from './styles';
+import { onValue, query, ref, set, update } from 'firebase/database';
 
 function Login() {
 
@@ -29,6 +30,18 @@ function Login() {
             .then((userCredential) => {
                 // Signed in 
                 const user = userCredential.user;
+                onValue(query(ref(rdb, "users")), (snapshot) => {
+                    const data = snapshot.val();
+                    Object.entries(data).map(([key, value]: [string, any]) => {
+                        if (value.email === user.email) {
+                           update(ref(rdb, "users/" + key), {
+                               uid: user.uid,
+                               online: true,
+                           })
+                        }
+                    })
+                });
+
                 dispatch(setCurrentUser({
                     uid: user.uid,
                     email: user.email,
