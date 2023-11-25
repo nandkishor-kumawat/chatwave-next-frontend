@@ -1,26 +1,8 @@
 import React from 'react'
-
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import CssBaseline from '@mui/material/CssBaseline';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
-import ChatContainer from '../chat/ChatContainer';
-import Navbar from '../Navbar';
-import UserCard from '../UserCard';
-import { Avatar, Button, Drawer, Stack } from '@mui/material';
-import PermanentDrawer from './PermanentDrawer';
-import useWindowSize from '@/custom hooks/useWindowSize';
+import {Box, Toolbar, IconButton, Drawer } from '@mui/material';
+
 
 type Props = {
     open: boolean,
