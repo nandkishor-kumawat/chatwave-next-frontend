@@ -1,5 +1,5 @@
-import { Box } from '@mui/material'
 import React from 'react'
+import { Box } from '@mui/material'
 import ChatHeader from './ChatHeader';
 import ChatBody from './ChatBody';
 import ChatForm from './ChatForm';
