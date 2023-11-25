@@ -109,6 +109,7 @@ export default function useChat() {
         onlineUsers,
         typingUsers,
         sendMessage,
-        changeRoom
+        changeRoom,
+        getSocket: () => socketRef.current
     };
 }      
