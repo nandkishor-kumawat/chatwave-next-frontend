@@ -1,24 +1,11 @@
 "use client"
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
-
-import { UserData, User, TypingInfo, Message } from "@/lib/types";
-
-import {
-    USER_JOIN_CHAT_EVENT,
-    USER_LEAVE_CHAT_EVENT,
-    NEW_CHAT_MESSAGE_EVENT,
-    START_TYPING_MESSAGE_EVENT,
-    STOP_TYPING_MESSAGE_EVENT
-} from '@/constants/eventconst';
+import { User, Message } from "@/lib/types";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
-import { setCurrentUser } from "@/redux/features/userSlice";
-import { useSearchParams } from "next/navigation";
-import { addMessage, getMessages } from "@/lib/messages";
-import { addDoc, collection, doc, getDoc, onSnapshot, or, orderBy, query, setDoc, where } from "firebase/firestore";
-import { db, rdb } from "@/firebase";
-import { onValue, ref } from "firebase/database";
-// import socket from "@/socket";
+import { collection, doc, getDoc, onSnapshot, orderBy, query, setDoc } from "firebase/firestore";
+import { db } from "@/firebase";
+
 
 
 export default function useChat() {
