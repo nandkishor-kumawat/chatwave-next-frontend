@@ -1,20 +1,8 @@
 import { Server } from 'socket.io';
-import { addUser, removeUser } from '@/lib/users'
-// import { addMessage } from '@/lib/messages';
-import {
-  USER_JOIN_CHAT_EVENT,
-  USER_LEAVE_CHAT_EVENT,
-  NEW_CHAT_MESSAGE_EVENT,
-  START_TYPING_MESSAGE_EVENT,
-  STOP_TYPING_MESSAGE_EVENT
-} from '@/constants/eventconst';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { User } from '@/lib/types';
-import { addMessage } from '@/lib/messages';
 
 function ioHandler(req: NextApiRequest, res: NextApiResponse) {
-
-
 
   let users: User[] = [];
 
@@ -24,20 +12,11 @@ function ioHandler(req: NextApiRequest, res: NextApiResponse) {
       users.splice(index, 1);
     }
     users.push(user)
-    // users = users.reduce((acc, user) => {
-    //   const existingUser = acc.find(u => u.id === user.id && u.email !== null);
-    //   if (!existingUser && user.email !== null) {
-    //     acc.push(user);
-    //   }
-    //   return acc;
-    // }, []);
   }
 
   const removeUser = (id: String) => {
     const index = users.findIndex((user) => user.id === id);
-    console.log({ index })
     users.splice(index, 1);
-    // users = users.filter((user) => user.id !== id);
   }
 
   const getUser = (id: string) => users.find((user) => user.id === id);
