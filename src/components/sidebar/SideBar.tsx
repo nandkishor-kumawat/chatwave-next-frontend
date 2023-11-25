@@ -1,9 +1,7 @@
 "use client"
 import * as React from 'react';
-import List from '@mui/material/List';
 import UserCard from '../UserCard';
 import PermanentDrawer from './PermanentDrawer';
-import useWindowSize, { Size } from '@/custom hooks/useWindowSize';
 import TemporaryDrawer from './TemporaryDrawer';
 import { useAppSelector } from '@/redux/store';
 import { Box } from '@mui/material';
