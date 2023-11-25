@@ -1,13 +1,13 @@
-import { useAppSelector } from '@/redux/store'
-import { Skeleton, Box, Stack, Avatar, Typography, Divider, ListItem, ListItemButton, ListItemIcon } from '@mui/material'
 import React from 'react'
+import { useAppSelector } from '@/redux/store'
+import { Box, Stack, Avatar, Typography, Divider } from '@mui/material'
 
 type PropTypes = {
     onlineUsers: any;
     typingUsers: any;
 }
 
-const ChatHeader = ({onlineUsers, typingUsers}: PropTypes) => {
+const ChatHeader = ({ onlineUsers, typingUsers }: PropTypes) => {
     const secondUser = useAppSelector((state) => state.user.secondUser);
     const isOnline = onlineUsers.find((user: any) => user.email === secondUser.email);
     const isTyping = typingUsers.find((user: any) => user.email === secondUser.email);
