@@ -1,10 +1,10 @@
-import useChat from '@/custom hooks/useChat';
 import React from 'react'
-import Image from 'next/image'
+import useChat from '@/custom hooks/useChat';
 import SideBar from '@/components/sidebar/SideBar';
-import { Box, Container, IconButton } from '@mui/material';
+import { Box  } from '@mui/material';
 import ChatContainer from '@/components/chat/ChatContainer';
 import { useAppSelector } from '@/redux/store';
+import StartChat from './chat/StartChat';
 
 const ChatScreen = () => {
 
@@ -29,7 +29,7 @@ const ChatScreen = () => {
                 onlineUsers={onlineUsers}
                 typingUsers={typingUsers}
                 sendMessage={sendMessage}
-            /> : null}
+            /> : <StartChat />}
 
         </Box>
     )
