@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import { Providers } from '@/redux/Provider'
+import Splash from '@/components/Splash'
 
 
 export const metadata: Metadata = {
@@ -21,12 +22,15 @@ export default function RootLayout({
 
         <Providers>
 
-          <div className="h-full">
+          {/* <div className="h-full">
             <Navbar />
             <div style={{ height: 'calc(100% - 56px)' }}>
               {children}
             </div>
-          </div>
+          </div> */}
+          <Splash>
+            {children}
+          </Splash>
 
         </Providers>
       </body>

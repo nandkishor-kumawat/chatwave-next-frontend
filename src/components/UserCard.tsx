@@ -5,6 +5,7 @@ import { User } from "@/lib/types";
 import { useAppDispatch, useAppSelector } from '@/redux/store';
 import { switchUser } from '@/redux/features/userSlice';
 import StyledBadge from './styled/StyledBadge';
+import Link from 'next/link';
 
 
 
@@ -33,7 +34,7 @@ const UserCard = ({ user, isOnline }: propTypes) => {
 
 
     return (
-        <>
+        <Link href={`/chat/inbox/${user.id}`}>
             <Box
                 px={1}
                 sx={{
@@ -65,7 +66,7 @@ const UserCard = ({ user, isOnline }: propTypes) => {
                 <Divider color="#434D5B" />
 
             </Box>
-        </>
+        </Link>
     )
 }
 

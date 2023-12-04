@@ -13,10 +13,11 @@ export default function useChat() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
     const [typingUsers, setTypingUsers] = useState<any[]>([]);
-    const socketRef = useRef<any>();
 
     const currentUser = useAppSelector((state) => state.user.currentUser);
     const secondUser = useAppSelector((state) => state.user.secondUser);
+    const socket = useAppSelector((state) => state.socket.socket);
+
     const dispatch = useAppDispatch()
 
     useEffect(() => {
@@ -42,47 +43,45 @@ export default function useChat() {
     }, [])
 
     useEffect(() => {
-        // return
+        if(!socket) return
         // if (!currentUser) return;
         // console.log(socket.connected)
-        fetch('/api/socket').finally(() => {
+        // fetch('/api/socket').finally(() => {
 
-            socketRef.current = io('/', {
-                autoConnect: false
-            });
+            // socket = io('/', {
+            //     autoConnect: false
+            // });
 
-            socketRef.current.connect()
+            // socket.connect()
 
 
-            socketRef.current.on("connect", () => {
-                console.log(socketRef.current.id, 'in client');
-                socketRef.current.emit("newUser", currentUser.email);
-            });
+            // socket.on("connect", () => {
+            //     console.log(socket.id, 'in client');
+            //     socket.emit("newUser", currentUser.email);
+            // });
 
-            socketRef.current.on('newUserResponse', (users: User[]) => {
-                setOnlineUsers(users);
-            });
 
-            socketRef.current.on('message', (data: any) => {
+
+            socket.on('message', (data: any) => {
                 console.log({ data })
                 setMessages((prev: any) => [...prev, data]);
             });
 
-            socketRef.current.on('disconnect', () => {
-                console.log('disconnected--->', socketRef.current.id)
-            });
-        })
+            // socket.on('disconnect', () => {
+            //     console.log('disconnected--->', socket.id)
+            // });
+        // })
 
-        return () => socketRef.current.disconnect();
+        // return () => socket.disconnect();
 
-    }, []);
+    }, [socket]);
 
 
     const sendMessage = async (data: any) => {
-        // if (!socketRef.current) return;
-        // socketRef.current.emit("message", data);
+        // if (!socket) return;
+        // socket.emit("message", data);
         const docRef = doc(collection(db, "messages"));
-        // socketRef.current.emit("message", { ...data, id: docRef.id });
+        socket.emit("message", { ...data, id: docRef.id });
 
         messages.push({ ...data, id: docRef.id })
         setMessages(messages);
@@ -100,8 +99,8 @@ export default function useChat() {
     }
 
     const changeRoom = (room: string) => {
-        if (!socketRef.current) return;
-        socketRef.current.emit("changeRoom", room);
+        if (!socket) return;
+        socket.emit("changeRoom", room);
     }
 
     return {
@@ -110,6 +109,5 @@ export default function useChat() {
         typingUsers,
         sendMessage,
         changeRoom,
-        getSocket: () => socketRef.current
     };
 }      

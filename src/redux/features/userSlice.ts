@@ -1,10 +1,11 @@
+import { User } from "@/lib/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type UserState = {
     message: string;
     secondUser: any;
     currentUser: any,
-    onlineUsers: any[]
+    onlineUsers: User[]
 };
 
 const initialState = {

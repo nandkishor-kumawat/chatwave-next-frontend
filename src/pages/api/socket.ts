@@ -29,14 +29,6 @@ function ioHandler(req: NextApiRequest, res: NextApiResponse) {
     io.on('connection', (socket: any) => {
       console.log(socket.id, 'connected')
 
-      socket.on('join-room', (roomId: string, userId: string) => {
-        socket.join(roomId);
-        socket.to(roomId).broadcast.emit('user-connected', userId);
-    
-        socket.on('disconnect', () => {
-          socket.to(roomId).broadcast.emit('user-disconnected', userId);
-        });
-      });
 
       socket.on('newUser', (email: string) => {
         addUser({
@@ -51,6 +43,7 @@ function ioHandler(req: NextApiRequest, res: NextApiResponse) {
         // socket.join(socket.id as string);
         // io.in(roomId as string).emit('newUserResponse', users);
         io.emit('newUserResponse', users);
+        console.log(users)
 
       });
 

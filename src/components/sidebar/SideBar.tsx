@@ -21,7 +21,8 @@ type User = {
     email: string;
 }
 
-export default function SideBar({ changeRoom, onlineUsers, typingUsers }: PropTypes) {
+export default function SideBar() {
+    const onlineUsers = useAppSelector(state => state.user.onlineUsers);
 
     const [open, setOpen] = React.useState<boolean>(false);
     const currentUser = useAppSelector(state => state.user.currentUser);
@@ -49,7 +50,7 @@ export default function SideBar({ changeRoom, onlineUsers, typingUsers }: PropTy
     const listD = () => (
         <Box>
             {allUsers.filter((user) => user.email !== currentUser.email).map((user, index) => {
-                const isOnline = onlineUsers.find((u) => u.email === user.email);
+                const isOnline = onlineUsers.find((u: { email: string; }) => u.email === user.email);
                 return (
                     <UserCard key={index} user={user} isOnline={isOnline} />
                 )

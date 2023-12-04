@@ -1,6 +1,6 @@
 "use client";
 
-import counterReducer from "./features/counterSlice";
+import socketReducer from "./features/socketSlice";
 import userReducer from "./features/userSlice";
 import logger from 'redux-logger'
 
@@ -18,7 +18,7 @@ import storage from "./storage";
  };
  
  const rootReducer = combineReducers({
-  counter: counterReducer,
+  socket: socketReducer,
   user: userReducer,
 },);
 
