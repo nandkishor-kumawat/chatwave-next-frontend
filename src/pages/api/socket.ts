@@ -1,6 +1,7 @@
 import { Server } from 'socket.io';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { User } from '@/lib/types';
+import { addMessage } from '@/lib/messages';
 
 function ioHandler(req: NextApiRequest, res: NextApiResponse) {
 
@@ -57,12 +58,17 @@ function ioHandler(req: NextApiRequest, res: NextApiResponse) {
       });
 
       socket.on('message', (data: any) => {
+        // addMessage(data);
         io.emit('message', data);
       })
 
-      socket.on('changeRoom', (room: string) => {
-        socket.join(room);
-        console.log(socket.rooms)
+      socket.on('ready', (id: string) => {
+        console.log(socket.id, 'ready')
+        io.emit('ready', id);
+      })
+
+      socket.emit('ice-candidate', (candidate: any) => {
+        io.emit('ice-candidate', candidate)
       })
 
       socket.on('disconnect', () => {

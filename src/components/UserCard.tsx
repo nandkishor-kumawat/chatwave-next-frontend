@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '@/redux/store';
 import { switchUser } from '@/redux/features/userSlice';
 import StyledBadge from './styled/StyledBadge';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 
 
@@ -21,7 +22,8 @@ type propTypes = {
 const UserCard = ({ user, isOnline }: propTypes) => {
 
     const dispatch = useAppDispatch()
-    const secondUser = useAppSelector((state) => state.user.secondUser)
+    const secondUser = useAppSelector((state) => state.user.secondUser);
+    const router = useRouter();
 
     if (!user) {
         return (
@@ -32,41 +34,46 @@ const UserCard = ({ user, isOnline }: propTypes) => {
         )
     }
 
+    const changeUser = () => {
+        dispatch(switchUser(user))
+        router.replace(`/chat/inbox/${user.id}`);
+    }
+
 
     return (
-        <Link href={`/chat/inbox/${user.id}`}>
-            <Box
-                px={1}
-                sx={{
-                    cursor: 'pointer',
-                    backgroundColor: user.id === secondUser?.id ? 'rgb(38 54 93 / 50%)' : null,
-                    "&:hover": {
-                        backgroundColor: 'rgb(38 54 93 / 30%)',
-                    }
-                }}
-                onClick={() => dispatch(switchUser(user))}
-            >
-                <Stack p={1} direction="row" alignItems="center" useFlexGap gap={2} >
 
-                    <StyledBadge
-                        overlap="circular"
-                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                        variant="dot"
-                        invisible={!isOnline}
-                    >
-                        <Avatar alt={user.name.toUpperCase()} src="https://mui.com/static/images/avatar/1.jpg" />
-                    </StyledBadge>
+        <Box
+            px={1}
+            sx={{
+                cursor: 'pointer',
+                backgroundColor: user.id === secondUser?.id ? 'rgb(38 54 93 / 50%)' : null,
+                "&:hover": {
+                    backgroundColor: 'rgb(38 54 93 / 30%)',
+                }
+            }}
+            onClick={changeUser}
+        >
+            <Stack p={1} direction="row" alignItems="center" useFlexGap gap={2} >
 
-                    <Stack>
-                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'white' }}>{user.name}</Typography>
-                        <Typography variant="caption" sx={{ color: '#ccc' }}>{user.email}</Typography>
-                    </Stack>
+                <StyledBadge
+                    overlap="circular"
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    variant="dot"
+                    invisible={!isOnline}
+                >
+                    <Avatar alt={user.name.toUpperCase()} src="https://mui.com/static/images/avatar/1.jpg" />
+                </StyledBadge>
+
+                <Stack>
+                    <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'white' }}>{user.name}</Typography>
+                    <Typography variant="caption" sx={{ color: '#ccc' }}>{user.email}</Typography>
                 </Stack>
+            </Stack>
 
-                <Divider color="#434D5B" />
+            <Divider color="#434D5B" />
 
-            </Box>
-        </Link>
+        </Box>
+
     )
 }
 

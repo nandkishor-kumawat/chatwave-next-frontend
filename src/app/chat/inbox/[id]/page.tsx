@@ -8,34 +8,34 @@ import { onValue, ref } from 'firebase/database';
 import { useParams } from 'next/navigation'
 import React, { useEffect } from 'react'
 import NoAccountsIcon from '@mui/icons-material/NoAccounts';
+import SideBar from '@/components/sidebar/SideBar';
+import StartChat from '@/components/chat/StartChat';
 
 const Inbox = () => {
   const params = useParams();
   const secondUser = useAppSelector((state) => state.user.secondUser);
   const onlineUsers = useAppSelector((state) => state.user.onlineUsers);
   const dispatch = useAppDispatch()
-  const [isLoading, setIsLoading] = React.useState(true);
-
-  const {
-    messages,
-    typingUsers,
-    sendMessage,
-    changeRoom,
-  } = useChat();
+  const [isLoading, setIsLoading] = React.useState(false);
 
   useEffect(() => {
-    if (params?.id) {
-      return onValue(ref(rdb, '/users/' + params.id), (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          dispatch(switchUser({ ...data, id: params.id }))
-        }
-        setIsLoading(false)
-      }, {
-        onlyOnce: true
-      });
-    }
-  }, [params?.id])
+    if (!params?.id) return
+
+    if (secondUser) return;
+
+    setIsLoading(true)
+    return onValue(ref(rdb, '/users/' + params.id), (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        dispatch(switchUser({ ...data, id: params.id }))
+        console.log(1)
+      }
+      setIsLoading(false)
+    }, {
+      onlyOnce: true
+    });
+
+  }, [])
 
   if (isLoading) {
     return
@@ -48,14 +48,12 @@ const Inbox = () => {
     </div>
   }
 
+
   return (
-    <ChatContainer
-      messages={messages}
-      onlineUsers={onlineUsers}
-      typingUsers={typingUsers}
-      sendMessage={sendMessage}
-    />
+    <>
+
+    </>
   )
 }
 
-export default Inbox
+export default React.memo(Inbox);

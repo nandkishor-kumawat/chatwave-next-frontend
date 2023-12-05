@@ -31,8 +31,8 @@ body {
     background-color: rgb(14 15 48 / 75%);
     /* display: flex;
     flex-direction: column;
-    height: 100vh;
-    color: white; */
+    height: 100vh;*/
+    color: white; 
     overflow: hidden;
     height:100%
 }
@@ -92,6 +92,7 @@ body {
         /* 4px */
     ;
 }
+
 
 .chat-start {
     place-items: start;
@@ -245,7 +246,7 @@ body {
 .chat-bubble {
     position: relative;
     display: block;
-    width: fit-content;
+    width: max-content;
     padding-left: 1rem
         /* 16px */
     ;

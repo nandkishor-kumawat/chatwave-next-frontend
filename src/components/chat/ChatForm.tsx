@@ -41,7 +41,7 @@ const ChatForm = ({ sendMessage }: PropTypes) => {
             <Box className='w-full pt-2'>
                 <Divider color="#434D5B" />
 
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} id='chat-form' name='chat-form'>
                     <FormControl
                         sx={{
                             display: 'flex',
@@ -66,6 +66,7 @@ const ChatForm = ({ sendMessage }: PropTypes) => {
                                 className='scrollbar'
                                 onChange={e => setMessage(e.target.value.trim())}
                                 ref={textref}
+                                id="message"
                             />
                         </Box>
 

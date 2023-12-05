@@ -19,7 +19,6 @@ const ChatBody = ({ messages }: PropTypes) => {
 
         chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
         // chatBodyRef.current.scrollTo({ top: chatBodyRef.current.scrollHeight, behavior: 'smooth' });
-
     }, [messages, secondUser])
 
     return (
@@ -40,4 +39,4 @@ const ChatBody = ({ messages }: PropTypes) => {
     )
 }
 
-export default ChatBody
+export default React.memo(ChatBody);

@@ -3,12 +3,8 @@ import { Message, MessageData } from "./types";
 
 let messages: Message[] = [];
 
-export const addMessage = (message: MessageData) => {
-    console.log('calling...')
-    const msg = { id: String(messages.length + 1), ...message, sentAt: Date.now() };
-    messages.push(msg);
-    console.log(JSON.stringify(messages, null, 2))
-    return msg;
+export const addMessage = (message: Message) => {
+    messages.push(message);
 };
 
 export const removeMessage = (id: string) => {
