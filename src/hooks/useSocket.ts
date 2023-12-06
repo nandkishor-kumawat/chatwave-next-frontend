@@ -6,16 +6,14 @@ import { useAppDispatch, useAppSelector } from '@/redux/store';
 import React, { useEffect, useRef } from 'react'
 import { io } from 'socket.io-client';
 
-const useSocket = (email: string) => {
+const useSocket = () => {
 
     const socketRef = useRef<any>();
     const dispatch = useAppDispatch();
     const currentUser = useAppSelector((state) => state.user.currentUser);
     const socket = useAppSelector((state) => state.socket.socket);
 
-
-
-    useEffect(() => {
+    const connectSocket = () => {
         fetch('/api/socket').finally(() => {
             socketRef.current = io('/', {
                 autoConnect: false
@@ -23,8 +21,12 @@ const useSocket = (email: string) => {
 
             dispatch(setSocket(socketRef.current))
         })
+    }
 
-    }, []);
+    useEffect(() => {
+        connectSocket()
+
+    }, [dispatch, connectSocket]);
 
     useEffect(() => {
         if (!currentUser || !socket) return;
@@ -46,7 +48,11 @@ const useSocket = (email: string) => {
         });
         return () => socket.disconnect();
 
-    }, [currentUser, socket]);
+    }, [currentUser, socket, dispatch]);
+
+    return {
+        connectSocket
+    }
 }
 
 export default useSocket

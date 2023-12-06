@@ -6,6 +6,7 @@ import VideoCallIcon from '@mui/icons-material/VideoCall';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { redirect } from 'next/navigation'
 import Link from 'next/link';
+import { signOut } from 'next-auth/react';
 
 type PropTypes = {
     onlineUsers: any;
@@ -18,7 +19,8 @@ const ChatHeader = ({ onlineUsers, typingUsers }: PropTypes) => {
     const isTyping = typingUsers.find((user: any) => user.email === secondUser.email);
 
 
-    const showInfo = () => {
+    const showInfo =async () => {
+        await signOut()
     }
 
 
@@ -37,7 +39,7 @@ const ChatHeader = ({ onlineUsers, typingUsers }: PropTypes) => {
                 <Stack py={1} px={2} direction="row" alignItems="center" useFlexGap gap={2} >
                     <Avatar alt={secondUser?.name} src="https://mui.com/static/images/avatar/1.jpg" />
                     <Stack>
-                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'white' }}>{secondUser?.name}</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'white' }}>{secondUser?.name} {secondUser?.id}</Typography>
                         {isOnline ? <Typography variant="caption" sx={{ color: '#51ff51' }}>Online</Typography> : null}
                     </Stack>
 
@@ -55,7 +57,7 @@ const ChatHeader = ({ onlineUsers, typingUsers }: PropTypes) => {
                             </Link>
                         </Button>
 
-                        <Button variant='text'>
+                        <Button variant='text' onClick={showInfo}>
                             <MoreVertIcon sx={{ color: 'white' }} />
                         </Button>
 

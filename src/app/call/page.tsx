@@ -28,6 +28,7 @@ const CallPage = () => {
     const [webCam, setWebCam] = React.useState(true);
 
     React.useEffect(() => {
+        if(!socket) return
 
         socket.on('ready', (id: string) => {
             console.log('in client', id)
@@ -48,7 +49,7 @@ const CallPage = () => {
               localStream.current.getTracks().forEach((track) => track.stop());
             }
           };
-    }, [])
+    }, [hasVideo, socket])
 
 
     const roomJoin = () => {

@@ -11,12 +11,12 @@ import { useRouter } from 'next/navigation';
 
 
 type propTypes = {
-    user: {
+    user?: {
         id: string;
         name: string;
         email: string;
     },
-    isOnline: boolean;
+    isOnline?: boolean;
 }
 
 const UserCard = ({ user, isOnline }: propTypes) => {
@@ -27,10 +27,26 @@ const UserCard = ({ user, isOnline }: propTypes) => {
 
     if (!user) {
         return (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: '2px', padding: '0 5px' }}>
-                <Skeleton variant="circular" width={40} height={40} />
-                <Skeleton variant="rectangular" width={200} height={40} />
-            </Box>
+            <>
+                <Box sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    padding: '5px',
+                }}>
+                    <Skeleton
+                        variant="circular"
+                        width={35}
+                        height={35}
+                        sx={{ bgcolor: '#434D5B' }}
+                    />
+                    <Box sx={{ flex: 1, alignSelf: 'flex-start' }}>
+                        <Skeleton width="60%" height={20} sx={{ bgcolor: '#434D5B' }} />
+                        <Skeleton width="25%" height={15} sx={{ bgcolor: '#434D5B' }} />
+                    </Box>
+                </Box>
+                <Divider color="#434D5B" />
+            </>
         )
     }
 

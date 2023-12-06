@@ -35,6 +35,19 @@ function SignUp() {
             });
     }
 
+    const handleSignUp = () => {
+
+        if (password !== password2) {
+            alert('Passwords do not match');
+            return;
+        }
+        if (password.length < 6) {
+            alert('Password must be at least 6 characters');
+            return;
+        }
+
+    }
+
     return (
         <Container component="main" sx={containerStyle} className='max-w-2xl h-full m-auto' >
             <Paper elevation={3} sx={paperStyle}>
@@ -121,6 +134,7 @@ function SignUp() {
                     </FormControl>
 
                     <Button
+                        onClick={handleSignUp}
                         variant="outlined"
                         type="button"
                         className="my-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">

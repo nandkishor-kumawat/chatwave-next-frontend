@@ -5,8 +5,8 @@ import PermanentDrawer from './PermanentDrawer';
 import TemporaryDrawer from './TemporaryDrawer';
 import { useAppSelector } from '@/redux/store';
 import { Box } from '@mui/material';
-import { onValue, ref } from 'firebase/database';
-import { rdb } from '@/firebase';
+import { db } from '@/firebase';
+import { collection, getDocs } from 'firebase/firestore';
 
 
 
@@ -23,20 +23,20 @@ type User = {
 
 export default function SideBar() {
     const onlineUsers = useAppSelector(state => state.user.onlineUsers);
-
+    const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [open, setOpen] = React.useState<boolean>(false);
     const currentUser = useAppSelector(state => state.user.currentUser);
     const [allUsers, setAllUsers] = React.useState<User[]>([])
 
     React.useEffect(() => {
-
-        onValue(ref(rdb, 'users'), (snapshot) => {
-            const data = snapshot.val();
-            if (data !== null) {
-                let users = Object.entries(data).map(([id, value]: [string, any]) => ({ id, ...value }));
-                setAllUsers(users)
-            }
-        });
+        const fetchUsers = async () => {
+            setIsLoading(true)
+            const querySnapshot = await getDocs(collection(db, "users"));
+            const users = querySnapshot.docs.map(doc => doc.data()) as User[];
+            setAllUsers(users)
+            setIsLoading(false)
+        }
+        fetchUsers()
     }, [])
 
     const handleDrawerOpen = () => {
@@ -48,17 +48,23 @@ export default function SideBar() {
     };
 
     const listD = () => (
-        <Box>
-            {allUsers.filter((user) => user.email !== currentUser.email).map((user, index) => {
-                const isOnline = onlineUsers.find((u: { email: string; }) => u.email === user.email);
-                return (
-                    <UserCard key={index} user={user} isOnline={isOnline} />
-                )
-            })}
-            {/* {Array.from(new Array(24)).map((_, index) => (
-                <UserCard key={index} user={{ id: 'loading', name: 'loading', email: 'loading' }} />
-            ))} */}
-        </Box>
+        isLoading ? (
+            <Box>
+                {Array.from(new Array(3)).map((_, index) => (
+                    <UserCard key={index} />
+                ))}
+            </Box>
+        ) : (
+            <Box>
+                {allUsers.filter((user) => user.email !== currentUser.email).map((user, index) => {
+                    const isOnline = onlineUsers.find((u: { email: string; }) => u.email === user.email);
+                    return (
+                        <UserCard key={index} user={user} isOnline={isOnline} />
+                    )
+                })}
+            </Box>
+        )
+
     )
 
 

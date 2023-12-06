@@ -50,7 +50,7 @@ export default function LinearProgressBar({ onEnd }: { onEnd: () => void }) {
     return () => {
       clearInterval(timer);
     };
-  }, [progress]);
+  }, [progress,onEnd]);
 
   return (
     <Box className='absolute flex-1 h-full w-full flex justify-center items-center bg-[#0c1b38] z-[9999]'>

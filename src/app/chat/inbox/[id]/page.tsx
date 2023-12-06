@@ -1,15 +1,16 @@
 "use client"
 import ChatContainer from '@/components/chat/ChatContainer';
 import useChat from '@/hooks/useChat';
-import { rdb } from '@/firebase';
+import { db } from '@/firebase';
 import { switchUser } from '@/redux/features/userSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/store';
-import { onValue, ref } from 'firebase/database';
 import { useParams } from 'next/navigation'
 import React, { useEffect } from 'react'
 import NoAccountsIcon from '@mui/icons-material/NoAccounts';
-import SideBar from '@/components/sidebar/SideBar';
-import StartChat from '@/components/chat/StartChat';
+
+import { doc, getDoc } from 'firebase/firestore';
+import { CircularProgress, Container } from '@mui/material';
+import Loader from '@/components/progress/Loader';
 
 const Inbox = () => {
   const params = useParams();
@@ -24,21 +25,25 @@ const Inbox = () => {
     if (secondUser) return;
 
     setIsLoading(true)
-    return onValue(ref(rdb, '/users/' + params.id), (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        dispatch(switchUser({ ...data, id: params.id }))
-        console.log(1)
+    async function fetchUser(id: string) {
+      const userRef = doc(db, 'users', id);
+      const userData = await getDoc(userRef);
+      const user = userData.data();
+      if (user) {
+        dispatch(switchUser({
+          id: user.uid,
+          name: user.name,
+          email: user.email,
+        }));
       }
       setIsLoading(false)
-    }, {
-      onlyOnce: true
-    });
+    }
+    fetchUser(params.id as string)
 
-  }, [])
+  }, [params?.id, dispatch, secondUser])
 
   if (isLoading) {
-    return
+    return <Loader/>
   }
 
   if (!secondUser) {

@@ -6,31 +6,37 @@ import { redirect, useRouter } from 'next/navigation';
 import React, { use, useEffect, useState } from 'react'
 import LinearProgressBar from './progress/LinearProgressBar';
 import useSocket from '@/hooks/useSocket';
+import { useSession } from 'next-auth/react';
 
 const Splash = ({
     children
 }: { children: React.ReactNode }) => {
 
-    const currentUser = useAppSelector((state) => state.user.currentUser);
+    const socket = useAppSelector((state) => state.socket.socket);
     const dispatch = useAppDispatch();
 
-    const [isUser, setIsUser] = useState(false);
-    const router = useRouter();
+    const { connectSocket } = useSocket();
 
+
+    const [isUser, setIsUser] = useState(false);
+
+    const { data } = useSession();
 
     useEffect(() => {
-        auth.onAuthStateChanged((user) => {
-            if (!user) return router.push('/login')
-            dispatch(setCurrentUser({
-                uid: user.uid,
-                email: user.email,
-                name: user.displayName,
-                photoUrl: user.photoURL
-            }))
-        })
-    }, [])
+        if (!socket) {
+            connectSocket()
+        }
+    }, [socket, connectSocket])
 
-    useSocket('currentUser.email')
+    useEffect(() => {
+        if (data?.user) {
+            console.log(data.user)
+            dispatch(setCurrentUser(data.user))
+        }
+    }, [data, dispatch])
+
+
+
 
     if (!isUser) {
         return (

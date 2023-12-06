@@ -7,6 +7,7 @@ import ChatForm from './ChatForm';
 import useChat from '@/hooks/useChat';
 import { useAppSelector } from '@/redux/store';
 import { usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 type PropTypes = {
     messages: any
@@ -25,6 +26,7 @@ const ChatContainer = () => {
     const pathname = usePathname()
     const secondUser = useAppSelector((state) => state.user.secondUser);
 
+
     if (pathname === '/chat' || !secondUser) return null
 
     return (
@@ -33,7 +35,7 @@ const ChatContainer = () => {
                 <Box className='flex h-full flex-col' role='presentation'>
                     <ChatHeader onlineUsers={onlineUsers} typingUsers={typingUsers} />
                     <ChatBody messages={messages} />
-                    <ChatForm sendMessage={sendMessage} />
+                    <ChatForm key={secondUser.id} sendMessage={sendMessage} />
                 </Box>
             </Box>
             {/* <Box className='w-[250px] bg-slate-400'>

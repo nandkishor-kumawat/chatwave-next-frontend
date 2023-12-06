@@ -1,79 +1,55 @@
 "use client"
 import React, { useState } from 'react';
 import { Button, TextField, Container, Typography, Paper, FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton, FilledInput, CircularProgress, Box } from '@mui/material';
-import { GoogleAuthProvider, getRedirectResult, signInWithEmailAndPassword, signInWithPopup, signInWithRedirect } from 'firebase/auth';
-import { auth, rdb } from '@/firebase';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useAppDispatch } from '@/redux/store';
-import { setCurrentUser } from '@/redux/features/userSlice';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { FcGoogle } from 'react-icons/fc';
 import { containerStyle, inputStyles, labelStyle, paperStyle } from './styles';
-import { onValue, query, ref, set, update } from 'firebase/database';
+import { signIn, useSession } from 'next-auth/react';
 
 function Login() {
 
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const dispatch = useAppDispatch();
-    const router = useRouter()
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const callbackUrl = searchParams?.get('callbackUrl') || '/';
+    const {data} = useSession();
 
-    const handleLogin = () => {
-        if (!email || !password) return;
-        setIsLoading(true);
-        signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                // Signed in 
-                const user = userCredential.user;
-                onValue(query(ref(rdb, "users")), (snapshot) => {
-                    const data = snapshot.val();
-                    Object.entries(data).map(([key, value]: [string, any]) => {
-                        if (value.email === user.email) {
-                           update(ref(rdb, "users/" + key), {
-                               uid: user.uid,
-                               online: true,
-                           })
-                        }
-                    })
-                });
-
-                dispatch(setCurrentUser({
-                    uid: user.uid,
-                    email: user.email,
-                    name: user.displayName,
-                    photoUrl: user.photoURL
-                }));
-                router.push('/');
-
-            }).catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log('invalid credentials', errorCode, errorMessage);
-            }).finally(() => {
-                setIsLoading(false);
-            });
+    if(data?.user) {
+        router.push(callbackUrl);
     }
 
-    const signInWithGoogle = () => {
-        const provider = new GoogleAuthProvider();
-        signInWithRedirect(auth, provider);
-        getRedirectResult(auth)
-            .then((result) => {
-                const credential = result && GoogleAuthProvider.credentialFromResult(result);
-                const token = credential?.accessToken;
-                const user = result?.user;
-                console.log(user)
-            }).catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                const email = error.customData.email;
-                const credential = GoogleAuthProvider.credentialFromError(error);
-            });
+    const handleLogin =async () => {
+        if (!email || !password) return;
+        setIsLoading(true);
+
+        try {
+          const data = await signIn('credentials', {
+                email,
+                password,
+                callbackUrl
+            })
+            console.log(data)
+
+        } catch (error) {
+            console.log(error)
+        }finally {
+            setIsLoading(false);
+        }
+    }
+
+    const signInWithGoogle = async() => {
+      await signIn('google',{
+        redirect:true,
+        callbackUrl
+    })
     }
 
     return (
@@ -134,14 +110,14 @@ function Login() {
 
                     </Button>
 
-                    {/* <Box className='flex items-center justify-center'>
+                    <Box className='flex items-center justify-center'>
                         <Box className="flex items-center justify-center gap-2 border border-gray-500 p-2 rounded-md cursor-pointer hover:bg-gray-500 hover:bg-opacity-10 transition-colors duration-300 ease-in-out"
                         onClick={signInWithGoogle}
                         >
                             <FcGoogle />
                             <Typography>Sign in with google</Typography>
                         </Box>
-                    </Box> */}
+                    </Box>
                 </form>
 
             </Paper>
