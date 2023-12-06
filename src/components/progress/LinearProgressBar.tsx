@@ -40,7 +40,7 @@ export default function LinearProgressBar({ onEnd }: { onEnd: () => void }) {
         const diff = 7 + Math.random() * 15;
         return Math.min(oldProgress + diff, 100);
       });
-    }, 500);
+    }, 100);
 
     if (progress === 100) {
       clearInterval(timer);

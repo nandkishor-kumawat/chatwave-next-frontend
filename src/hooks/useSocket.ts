@@ -3,7 +3,7 @@ import { User } from '@/lib/types';
 import { resetSocket, setSocket } from '@/redux/features/socketSlice';
 import { setOnlineUsers } from '@/redux/features/userSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/store';
-import React, { useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import { io } from 'socket.io-client';
 
 const useSocket = () => {
@@ -13,7 +13,8 @@ const useSocket = () => {
     const currentUser = useAppSelector((state) => state.user.currentUser);
     const socket = useAppSelector((state) => state.socket.socket);
 
-    const connectSocket = () => {
+    const connectSocket = useCallback(() => {
+        if (socket?.connected) return
         fetch('/api/socket').finally(() => {
             socketRef.current = io('/', {
                 autoConnect: false
@@ -21,7 +22,7 @@ const useSocket = () => {
 
             dispatch(setSocket(socketRef.current))
         })
-    }
+    }, [])
 
     useEffect(() => {
         connectSocket()

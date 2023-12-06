@@ -22,11 +22,11 @@ const Splash = ({
 
     const { data } = useSession();
 
-    useEffect(() => {
-        if (!socket) {
-            connectSocket()
-        }
-    }, [socket, connectSocket])
+    // useEffect(() => {
+    //     if (!socket) {
+    //         connectSocket()
+    //     }
+    // }, [socket, connectSocket])
 
     useEffect(() => {
         if (data?.user) {
@@ -35,12 +35,16 @@ const Splash = ({
         }
     }, [data, dispatch])
 
+    const isUser2 = React.useMemo(() => !!data?.user, [data?.user])
+
+    const handleClose = () => {
+        setIsUser(true)
+    }
 
 
-
-    if (!isUser) {
+    if (!isUser2) {
         return (
-            <LinearProgressBar onEnd={() => setIsUser(true)} />
+            <LinearProgressBar onEnd={handleClose} />
         )
     }
 
