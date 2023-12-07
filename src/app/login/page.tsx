@@ -20,36 +20,35 @@ function Login() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const callbackUrl = searchParams?.get('callbackUrl') || '/';
-    const {data} = useSession();
+    const { data } = useSession();
 
-    if(data?.user) {
+    if (data?.user) {
         router.push(callbackUrl);
     }
 
-    const handleLogin =async () => {
+    const handleLogin = async () => {
         if (!email || !password) return;
         setIsLoading(true);
 
         try {
-          const data = await signIn('credentials', {
+            await signIn('credentials', {
                 email,
                 password,
                 callbackUrl
             })
-            console.log(data)
 
         } catch (error) {
             console.log(error)
-        }finally {
+        } finally {
             setIsLoading(false);
         }
     }
 
-    const signInWithGoogle = async() => {
-      await signIn('google',{
-        redirect:true,
-        callbackUrl
-    })
+    const signInWithGoogle = async () => {
+        await signIn('google', {
+            redirect: true,
+            callbackUrl
+        })
     }
 
     return (
@@ -112,7 +111,7 @@ function Login() {
 
                     <Box className='flex items-center justify-center'>
                         <Box className="flex items-center justify-center gap-2 border border-gray-500 p-2 rounded-md cursor-pointer hover:bg-gray-500 hover:bg-opacity-10 transition-colors duration-300 ease-in-out"
-                        onClick={signInWithGoogle}
+                            onClick={signInWithGoogle}
                         >
                             <FcGoogle />
                             <Typography>Sign in with google</Typography>
