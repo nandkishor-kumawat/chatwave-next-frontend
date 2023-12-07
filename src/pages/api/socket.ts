@@ -44,7 +44,6 @@ function ioHandler(req: NextApiRequest, res: NextApiResponse) {
         // socket.join(socket.id as string);
         // io.in(roomId as string).emit('newUserResponse', users);
         io.emit('newUserResponse', users);
-        console.log(users)
 
       });
 
@@ -64,7 +63,13 @@ function ioHandler(req: NextApiRequest, res: NextApiResponse) {
 
       socket.on('ready', (id: string) => {
         console.log(socket.id, 'ready')
-        io.emit('ready', id);
+        socket.join(id);
+        io.to(id).emit('ready', id);
+      })
+
+      socket.on('change-media', (room, data) => {
+        console.log('change media')
+        io.to(room).emit('change-media', data);
       })
 
       socket.emit('ice-candidate', (candidate: any) => {
