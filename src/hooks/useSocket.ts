@@ -12,9 +12,9 @@ const useSocket = () => {
     const dispatch = useAppDispatch();
     const currentUser = useAppSelector((state) => state.user.currentUser);
     const socket = useAppSelector((state) => state.socket.socket);
-
+console.log('sssssssssssssssss')
     const connectSocket = useCallback(() => {
-        if (socket?.connected) return
+        if (socket) return
         fetch('/api/socket').finally(() => {
             socketRef.current = io('/', {
                 autoConnect: false
