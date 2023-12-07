@@ -7,6 +7,7 @@ import { useAppSelector } from '@/redux/store';
 import { Box } from '@mui/material';
 import { db } from '@/firebase';
 import { collection, getDocs } from 'firebase/firestore';
+import useChat from '@/hooks/useChat';
 
 
 
@@ -22,7 +23,7 @@ type User = {
 }
 
 export default function SideBar() {
-    const onlineUsers = useAppSelector(state => state.user.onlineUsers);
+    const { onlineUsers } = useChat()
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [open, setOpen] = React.useState<boolean>(false);
     const currentUser = useAppSelector(state => state.user.currentUser);
@@ -47,6 +48,7 @@ export default function SideBar() {
         setOpen(prev => !prev);
     };
 
+
     const listD = () => (
         isLoading ? (
             <Box>
@@ -59,7 +61,7 @@ export default function SideBar() {
                 {allUsers.filter((user) => user.email !== currentUser.email).map((user, index) => {
                     const isOnline = onlineUsers.find((u: { email: string; }) => u.email === user.email);
                     return (
-                        <UserCard key={index} user={user} isOnline={isOnline} />
+                        <UserCard key={index} user={user} isOnline={!!isOnline} />
                     )
                 })}
             </Box>
