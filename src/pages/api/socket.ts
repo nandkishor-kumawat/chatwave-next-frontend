@@ -67,7 +67,7 @@ function ioHandler(req: NextApiRequest, res: NextApiResponse) {
         io.to(id).emit('ready', id);
       })
 
-      socket.on('change-media', (room, data) => {
+      socket.on('change-media', (room:string, data:any) => {
         console.log('change media')
         io.to(room).emit('change-media', data);
       })

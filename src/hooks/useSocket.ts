@@ -1,7 +1,6 @@
 "use client"
 import { User } from '@/lib/types';
 import { resetSocket, setSocket } from '@/redux/features/socketSlice';
-import { setOnlineUsers } from '@/redux/features/userSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/store';
 import React, { useCallback, useEffect, useRef } from 'react'
 import { io } from 'socket.io-client';
@@ -12,7 +11,7 @@ const useSocket = () => {
     const dispatch = useAppDispatch();
     const currentUser = useAppSelector((state) => state.user.currentUser);
     const socket = useAppSelector((state) => state.socket.socket);
-console.log('sssssssssssssssss')
+
     const connectSocket = useCallback(() => {
         if (socket) return
         fetch('/api/socket').finally(() => {
@@ -40,7 +39,7 @@ console.log('sssssssssssssssss')
         });
 
         socket.on('newUserResponse', (users: User[]) => {
-            dispatch(setOnlineUsers(users));
+            // dispatch(setOnlineUsers(users));
         });
 
         socket.on('disconnect', () => {

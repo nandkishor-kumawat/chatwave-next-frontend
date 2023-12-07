@@ -4,7 +4,7 @@ import { addDoc, collection, doc, setDoc } from 'firebase/firestore';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { NextResponse } from 'next/server';
 
-export async function handler(request: Request) {
+export async function POST(request: Request) {
     const { email, password, name } = await request.json();
     
     if (!email || !password || !name) {

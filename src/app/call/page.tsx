@@ -44,7 +44,7 @@ const CallPage = () => {
             console.log(a)
         })
 
-    }, [socket])
+    }, [socket, room])
 
     React.useEffect(() => {
         navigator.mediaDevices.getUserMedia({
