@@ -4,6 +4,7 @@ import { useSearchParams, useRouter, notFound } from 'next/navigation'
 import { useAppSelector } from '@/redux/store'
 import { ICE_SERVERS } from '@/config/servers'
 import { Button, ButtonGroup } from '@mui/material'
+import { useSocket } from '@/lib/providers/socket-provider'
 
 
 const CallPage = () => {
@@ -11,11 +12,13 @@ const CallPage = () => {
     const router = useRouter()
 
     const id = searchParams?.get('id');
+    const room = searchParams?.get('room');
     const hasVideo = searchParams?.get('has_video');
 
     if (!id) notFound();
 
-    const socket = useAppSelector((state) => state.socket.socket);
+    const { socket } = useSocket();
+    const currentUser = useAppSelector((state) => state.user.currentUser);
 
     const localVideoRef = React.useRef<HTMLVideoElement>(null);
     const remoteVideoRef = React.useRef<HTMLVideoElement>(null);
@@ -27,13 +30,23 @@ const CallPage = () => {
     const [mute, setMute] = React.useState(false);
     const [webCam, setWebCam] = React.useState(true);
 
+
     React.useEffect(() => {
-        if(!socket) return
+        if (!socket) return
+
+        socket.emit('ready', room);
 
         socket.on('ready', (id: string) => {
             console.log('in client', id)
         })
 
+        socket.on('change-media', (a: any) => {
+            console.log(a)
+        })
+
+    }, [socket])
+
+    React.useEffect(() => {
         navigator.mediaDevices.getUserMedia({
             video: hasVideo === 'true',
             audio: true
@@ -46,10 +59,10 @@ const CallPage = () => {
 
         return () => {
             if (localStream.current) {
-              localStream.current.getTracks().forEach((track) => track.stop());
+                localStream.current.getTracks().forEach((track) => track.stop());
             }
-          };
-    }, [hasVideo, socket])
+        };
+    }, [hasVideo])
 
 
     const roomJoin = () => {
@@ -60,7 +73,7 @@ const CallPage = () => {
             localStream.current = stream;
             if (localVideoRef.current) {
                 localVideoRef.current.srcObject = stream;
-                socket.emit('ready', id);
+                socket.emit('ready', room);
             }
         })
     }
@@ -83,10 +96,11 @@ const CallPage = () => {
         return connection;
     };
 
-    const toggleMediaStream = (type:string, state:boolean) => {
+    const toggleMediaStream = (type: string, state: boolean) => {
         localStream.current!.getTracks().forEach((track) => {
             if (track.kind === type) {
                 track.enabled = !state;
+                socket.emit('change-media', room, { type, state })
             }
         });
     };
