@@ -1,9 +1,15 @@
-import type { NextAuthOptions } from 'next-auth'
+import type { DefaultUser, NextAuthOptions } from 'next-auth'
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials"
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '@/firebase';
+interface User {
+    id: string;
+    name?: string | null | undefined;
+    email?: string | null | undefined;
+    image?: string | null | undefined;
+}
 
 export const options: NextAuthOptions = {
     providers: [
@@ -51,7 +57,7 @@ export const options: NextAuthOptions = {
 
                 if (user) {
                     return {
-                        id: user?.uid,
+                        id: user?.id,
                         name: user.name,
                         email: user.email,
                     }
@@ -65,13 +71,13 @@ export const options: NextAuthOptions = {
     ],
     callbacks: {
         async jwt({ token, user }) {
-            if (user) token.uid = user.id
+            if (user) token.id = user.id
             return token
         },
-        // async session({ session, token }) {
-        //     if (session?.user) session.user.id = token.id
-        //     return session
-        // }
+        async session({ session, token }:any) {
+            if (session?.user) session.user.id = token.id
+            return session
+        }
     },
     pages: {
         signIn: "/login",
