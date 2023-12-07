@@ -5,7 +5,7 @@ import { User, Message } from "@/lib/types";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { collection, doc, getDoc, onSnapshot, orderBy, query, setDoc, where } from "firebase/firestore";
 import { db } from "@/firebase";
-import { getMessages } from "@/lib/messages";
+import { useSocket } from "@/lib/providers/socket-provider";
 
 
 
@@ -15,10 +15,7 @@ export default function useChat() {
     const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
     const [typingUsers, setTypingUsers] = useState<any[]>([]);
 
-    const socket = useAppSelector((state) => state.socket.socket);
-    const currentUser = useAppSelector((state) => state.user.currentUser);
-    const secondUser = useAppSelector((state) => state.user.secondUser);
-
+    const { socket, isConnected } = useSocket()
     const dispatch = useAppDispatch()
 
     useEffect(() => {
@@ -45,10 +42,15 @@ export default function useChat() {
 
     useEffect(() => {
         if (!socket) return
-  
+
         socket.on('message', (data: any) => {
             console.log({ data })
             // setMessages((prev: any) => [...prev, data]);
+        });
+
+        socket.on('newUserResponse', (users: User[]) => {
+            console.log(JSON.stringify(users, null, 2))
+            setOnlineUsers(users);
         });
 
     }, [socket]);
