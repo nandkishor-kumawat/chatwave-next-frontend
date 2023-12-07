@@ -3,6 +3,7 @@ import './globals.css'
 import Navbar from '@/components/Navbar'
 import { Providers } from '@/redux/Provider'
 import Splash from '@/components/Splash'
+import { SocketProvider } from '@/lib/providers/socket-provider'
 
 
 export const metadata: Metadata = {
@@ -22,15 +23,11 @@ export default function RootLayout({
 
         <Providers>
 
-          {/* <div className="h-full">
-            <Navbar />
-            <div style={{ height: 'calc(100% - 56px)' }}>
+          <SocketProvider>
+            <Splash>
               {children}
-            </div>
-          </div> */}
-          <Splash>
-            {children}
-          </Splash>
+            </Splash>
+          </SocketProvider>
 
         </Providers>
       </body>
