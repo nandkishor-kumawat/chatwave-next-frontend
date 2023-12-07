@@ -7,6 +7,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { redirect } from 'next/navigation'
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
+import { v4 as uuidv4 } from 'uuid';
 
 type PropTypes = {
     onlineUsers: any;
@@ -19,10 +20,9 @@ const ChatHeader = ({ onlineUsers, typingUsers }: PropTypes) => {
     const isTyping = typingUsers.find((user: any) => user.email === secondUser.email);
 
 
-    const showInfo =async () => {
+    const showInfo = async () => {
         await signOut()
     }
-
 
 
     // if(!secondUser) return null
@@ -39,20 +39,20 @@ const ChatHeader = ({ onlineUsers, typingUsers }: PropTypes) => {
                 <Stack py={1} px={2} direction="row" alignItems="center" useFlexGap gap={2} >
                     <Avatar alt={secondUser?.name} src="https://mui.com/static/images/avatar/1.jpg" />
                     <Stack>
-                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'white' }}>{secondUser?.name} {secondUser?.id}</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'white' }}>{secondUser?.name}</Typography>
                         {isOnline ? <Typography variant="caption" sx={{ color: '#51ff51' }}>Online</Typography> : null}
                     </Stack>
 
 
                     <ButtonGroup sx={{ flex: 1, justifyContent: 'flex-end', mr: 1 }}>
                         <Button variant='text'>
-                            <Link href={`/call?has_video=false&id=${secondUser?.id}`}>
+                            <Link href={`/call?has_video=false&id=${secondUser?.id}&room=${uuidv4()}`}>
                                 <CallIcon sx={{ color: 'white' }} />
                             </Link>
                         </Button>
 
                         <Button variant='text'>
-                            <Link href={`/call?has_video=true&id=${secondUser?.id}`}>
+                            <Link href={`/call?has_video=true&id=${secondUser?.id}&room=${uuidv4()}`}>
                                 <VideoCallIcon sx={{ color: 'white' }} />
                             </Link>
                         </Button>
