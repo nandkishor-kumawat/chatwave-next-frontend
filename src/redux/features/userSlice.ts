@@ -5,14 +5,12 @@ type UserState = {
     message: string;
     secondUser: any;
     currentUser: any,
-    onlineUsers: User[]
 };
 
 const initialState = {
     message: '',
     secondUser:null,
     currentUser: null,
-    onlineUsers: []
 } as UserState;
 
 export const user = createSlice({
@@ -30,17 +28,12 @@ export const user = createSlice({
         setCurrentUser: (state, action: PayloadAction<any>) => {
             state.currentUser = action.payload
         },
-
-        setOnlineUsers: (state, action: PayloadAction<any>) => {
-            state.onlineUsers = action.payload
-        }
     },
 });
 
 export const {
     setChatMessage,
     switchUser,
-    setCurrentUser,
-    setOnlineUsers
+    setCurrentUser
 } = user.actions;
 export default user.reducer;
