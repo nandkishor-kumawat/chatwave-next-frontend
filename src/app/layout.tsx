@@ -24,9 +24,8 @@ export default function RootLayout({
         <Providers>
 
           <SocketProvider>
-            <Splash>
+            <Splash/>
               {children}
-            </Splash>
           </SocketProvider>
 
         </Providers>

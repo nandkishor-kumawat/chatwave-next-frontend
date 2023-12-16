@@ -4,13 +4,17 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
-   return NextResponse.json({id:'s'})
-//   let data = await getDoc(doc(db, "users", id as string));
+   const id = request.url.split('/').at(-1);
+   if (!id) {
+      return NextResponse.json({ error: 'User id not found' });
+   }
 
-//   if (!data.exists()) {
-//     return NextResponse.json({ error: 'User not found' });
-//   }
+   let data = await getDoc(doc(db, "users", id as string));
 
-//   return NextResponse.json({ data: { ...data.data(), id: data.id } });
+   if (!data.exists()) {
+      return NextResponse.json({ error: 'User not found' });
+   }
+
+   return NextResponse.json({ data: { ...data.data() } });
 }
 

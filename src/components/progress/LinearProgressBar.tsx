@@ -1,7 +1,11 @@
+"use client"
 import * as React from 'react';
 import LinearProgress, { LinearProgressProps } from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import { useSession } from 'next-auth/react';
+import { setCurrentUser } from '@/redux/features/userSlice';
+import { useAppDispatch } from '@/redux/store';
 
 function LinearProgressWithLabel(props: LinearProgressProps & { value: number }) {
   return (
@@ -27,6 +31,17 @@ function LinearProgressWithLabel(props: LinearProgressProps & { value: number })
 }
 
 export default function LinearProgressBar({ onEnd }: { onEnd: () => void }) {
+  const dispatch = useAppDispatch();
+  const { data } = useSession();
+
+
+
+  React.useEffect(() => {
+    if (data?.user) {
+      dispatch(setCurrentUser(data.user));
+    }
+  }, [data, dispatch])
+  
   const [progress, setProgress] = React.useState(0);
 
   React.useEffect(() => {
@@ -50,7 +65,7 @@ export default function LinearProgressBar({ onEnd }: { onEnd: () => void }) {
     return () => {
       clearInterval(timer);
     };
-  }, [progress,onEnd]);
+  }, [progress, onEnd]);
 
   return (
     <Box className='absolute flex-1 h-full w-full flex justify-center items-center bg-[#0c1b38] z-[9999]'>

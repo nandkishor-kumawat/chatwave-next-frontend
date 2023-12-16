@@ -31,11 +31,15 @@ function Login() {
         setIsLoading(true);
 
         try {
-            await signIn('credentials', {
+            const res = await signIn('credentials', {
                 email,
                 password,
-                callbackUrl
+                // callbackUrl,
+                // redirect:false
             })
+
+            console.log(res?.error)
+            if (!res?.error) router.push(callbackUrl)
 
         } catch (error) {
             console.log(error)
