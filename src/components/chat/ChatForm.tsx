@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Box, Divider, FormControl, Button } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/redux/store';
 import Textarea from '../styled/TextArea';
+import { serverTimestamp } from 'firebase/firestore';
 
 
 
@@ -22,7 +23,6 @@ const ChatForm = ({ sendMessage }: PropTypes) => {
 
 
     const handleSubmit = (e: any) => {
-
         e.preventDefault();
         sendMessage({
             receiver_id: secondUser.email,

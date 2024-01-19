@@ -27,7 +27,9 @@ export default function SideBar() {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [open, setOpen] = React.useState<boolean>(false);
     const currentUser = useAppSelector(state => state.user.currentUser);
-    const [allUsers, setAllUsers] = React.useState<User[]>([])
+    const [allUsers, setAllUsers] = React.useState<User[]>([]);
+
+    console.log(onlineUsers)
 
     React.useEffect(() => {
         const fetchUsers = async () => {
@@ -68,6 +70,8 @@ export default function SideBar() {
         )
 
     )
+
+    if(!currentUser) return 
 
 
     return (

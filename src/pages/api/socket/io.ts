@@ -62,28 +62,29 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseServerIo) => {
         io.emit('message', data);
       })
 
-      socket.on('call:join', (roomId: string) => {
+      socket.on('room:join', (roomId: string) => {
         const { rooms } = io.sockets.adapter;
         const room = rooms.get(roomId);
+        console.log(room)
         if (!room) {
-          io.emit("call:created",{
+          io.emit("room:created",{
             roomId: roomId,
             peerId: socket.id
           });
-          console.log("call:created")
+          console.log("room:created")
           socket.join(roomId);
         } else if (room.size !== 7) {
 
-          io.emit("call:joined",{
+          io.emit("room:joined",{
             roomId: roomId,
             peerId: socket.id
           })
 
-          console.log("call:joined")
+          console.log("room:joined")
           socket.join(roomId);
         } else {
-          io.emit("full");
-          console.log("full")
+          io.emit("room:full");
+          console.log("room:full")
         }
 
       })

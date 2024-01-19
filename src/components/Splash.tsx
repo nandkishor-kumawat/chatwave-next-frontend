@@ -6,10 +6,13 @@ import React, { use, useEffect, useState } from 'react'
 import LinearProgressBar from './progress/LinearProgressBar';
 import { useSession } from 'next-auth/react';
 import { useSocket } from '@/lib/providers/socket-provider';
+import useChat from '@/hooks/useChat';
 
 const Splash = () => {
 
     const dispatch = useAppDispatch();
+
+    useChat();
 
 
 

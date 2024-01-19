@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { User, Message } from "@/lib/types";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
@@ -14,6 +14,7 @@ export default function useChat() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
     const [typingUsers, setTypingUsers] = useState<any[]>([]);
+    const currentUser = useAppSelector(state => state.user.currentUser)
 
     const { socket, isConnected } = useSocket()
     const dispatch = useAppDispatch()
@@ -38,7 +39,12 @@ export default function useChat() {
             setMessages(messages);
         });
         return () => unsubscribe();
-    }, [])
+    }, []);
+
+    useEffect(() => {
+        if (!socket || !currentUser) return
+        socket.emit('newUser', currentUser.email)
+    }, [socket, currentUser]);
 
     useEffect(() => {
         if (!socket) return
