@@ -24,9 +24,9 @@ const VideoCall = () => {
 
   const { socket, isConnected } = useSocket();
   const peerConnections = useRef<Record<string, RTCPeerConnection>>({});
-  const remoteVideoRef = useRef<Record<string, HTMLVideoElement>>({});
+  // const remoteVideoRef = useRef<Record<string, HTMLVideoElement>>({});
   const localVideoRef = React.useRef<HTMLVideoElement>(null);
-  // const remoteVideoRef = React.useRef<HTMLVideoElement>(null);
+  const remoteVideoRef = React.useRef<HTMLVideoElement>(null);
   const peerConnectionRef = React.useRef<RTCPeerConnection | null>(null);
 
   const localStreamRef = React.useRef<MediaStream | null>(null);
@@ -100,6 +100,7 @@ const VideoCall = () => {
   return (
     <div>
       <video ref={localVideoRef} autoPlay  />
+      <video ref={remoteVideoRef} autoPlay />
 
     </div>
 
