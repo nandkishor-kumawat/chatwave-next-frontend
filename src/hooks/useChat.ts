@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { collection, doc, getDoc, onSnapshot, orderBy, query, setDoc, where } from "firebase/firestore";
 import { db } from "@/firebase";
 import { useSocket } from "@/lib/providers/socket-provider";
+import { SOCKET_ACTIONS } from "@/constants/socket-actions";
 
 
 
@@ -17,25 +18,15 @@ export default function useChat() {
     const currentUser = useAppSelector(state => state.user.currentUser)
 
     const { socket, isConnected } = useSocket()
-    const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
 
         const messagesCollection = collection(db, 'messages');
-        const q = query(
-            messagesCollection,
-            orderBy("sentAt", "asc"),
-            // limit(10),
-        );
+        const q = query(messagesCollection, orderBy("sentAt", "asc"),);
 
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            const messages: any[] = [];
-            querySnapshot.forEach((doc) => {
-                messages.push({
-                    ...doc.data(),
-                    id: doc.id
-                });
-            });
+            const messages = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })) as Message[];
             setMessages(messages);
         });
         return () => unsubscribe();
@@ -43,21 +34,28 @@ export default function useChat() {
 
     useEffect(() => {
         if (!socket || !currentUser) return
-        socket.emit('newUser', currentUser.email)
+        socket.emit(SOCKET_ACTIONS.NEW_USER, currentUser.email);
+        return () => {
+            socket.off(SOCKET_ACTIONS.NEW_USER);
+        }
     }, [socket, currentUser]);
 
     useEffect(() => {
         if (!socket) return
 
         socket.on('message', (data: any) => {
-            console.log({ data })
+            console.log(data)
             // setMessages((prev: any) => [...prev, data]);
         });
 
-        socket.on('newUserResponse', (users: User[]) => {
-            console.log(JSON.stringify(users, null, 2))
+        socket.on(SOCKET_ACTIONS.NEW_USER_RESPONSE, (users: User[]) => {
             setOnlineUsers(users);
         });
+
+        return () => {
+            socket.off('message');
+            socket.off(SOCKET_ACTIONS.NEW_USER_RESPONSE);
+        }
 
     }, [socket]);
 

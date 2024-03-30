@@ -1,17 +1,13 @@
 'use client'
-import { Skeleton, Box, Stack, Avatar, Typography, Divider, ListItem, ListItemButton, ListItemIcon } from '@mui/material'
+import { Skeleton, Box, Stack, Avatar, Typography, Divider } from '@mui/material'
 import React from 'react'
-import { User } from "@/lib/types";
 import { useAppDispatch, useAppSelector } from '@/redux/store';
 import { switchUser } from '@/redux/features/userSlice';
 import StyledBadge from './styled/StyledBadge';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-
-
+import { useParams, useRouter } from 'next/navigation';
 
 type propTypes = {
-    user?: {
+    user: {
         id: string;
         name: string;
         email: string;
@@ -24,31 +20,7 @@ const UserCard = ({ user, isOnline }: propTypes) => {
     const dispatch = useAppDispatch()
     const secondUser = useAppSelector((state) => state.user.secondUser);
     const router = useRouter();
-
-    if (!user) {
-        return (
-            <>
-                <Box sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1,
-                    padding: '5px',
-                }}>
-                    <Skeleton
-                        variant="circular"
-                        width={35}
-                        height={35}
-                        sx={{ bgcolor: '#434D5B' }}
-                    />
-                    <Box sx={{ flex: 1, alignSelf: 'flex-start' }}>
-                        <Skeleton width="60%" height={20} sx={{ bgcolor: '#434D5B' }} />
-                        <Skeleton width="25%" height={15} sx={{ bgcolor: '#434D5B' }} />
-                    </Box>
-                </Box>
-                <Divider color="#434D5B" />
-            </>
-        )
-    }
+    const params = useParams();
 
     const changeUser = () => {
         dispatch(switchUser(user))
@@ -62,7 +34,7 @@ const UserCard = ({ user, isOnline }: propTypes) => {
             px={1}
             sx={{
                 cursor: 'pointer',
-                backgroundColor: user.id === secondUser?.id ? 'rgb(38 54 93 / 50%)' : null,
+                backgroundColor: user.id === params?.id ? 'rgb(38 54 93 / 50%)' : null,
                 "&:hover": {
                     backgroundColor: 'rgb(38 54 93 / 30%)',
                 }

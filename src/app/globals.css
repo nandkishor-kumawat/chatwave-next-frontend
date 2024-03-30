@@ -273,6 +273,7 @@ body {
     background-color: hsl(var(--n) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: hsl(var(--nc) / var(--tw-text-opacity));
+    white-space: pre-wrap;
 }
 
 .chat-bubble:before {

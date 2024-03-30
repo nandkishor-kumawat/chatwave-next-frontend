@@ -1,4 +1,4 @@
-import type { DefaultUser, NextAuthOptions } from 'next-auth'
+import { getServerSession, type DefaultUser, type NextAuthOptions } from 'next-auth'
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials"
 import { signInWithEmailAndPassword } from 'firebase/auth';
@@ -54,13 +54,8 @@ export const options: NextAuthOptions = {
                 const userRef = doc(db, 'users', data?.uid);
                 const userData = await getDoc(userRef);
                 const user = userData.data();
-
                 if (user) {
-                    return {
-                        id: user?.id,
-                        name: user.name,
-                        email: user.email,
-                    }
+                    return user as DefaultUser
                 }
 
 
@@ -74,7 +69,7 @@ export const options: NextAuthOptions = {
             if (user) token.id = user.id
             return token
         },
-        async session({ session, token }:any) {
+        async session({ session, token }: any) {
             if (session?.user) session.user.id = token.id
             return session
         }
@@ -84,3 +79,5 @@ export const options: NextAuthOptions = {
     },
     secret: process.env.NEXTAUTH_SECRET
 }
+
+export const getAuthSession = () => getServerSession(options)

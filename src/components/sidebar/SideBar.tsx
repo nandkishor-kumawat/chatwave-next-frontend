@@ -8,6 +8,7 @@ import { Box } from '@mui/material';
 import { db } from '@/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import useChat from '@/hooks/useChat';
+import UserLoading from '../user-loading';
 
 
 
@@ -28,8 +29,6 @@ export default function SideBar() {
     const [open, setOpen] = React.useState<boolean>(false);
     const currentUser = useAppSelector(state => state.user.currentUser);
     const [allUsers, setAllUsers] = React.useState<User[]>([]);
-
-    console.log(onlineUsers)
 
     React.useEffect(() => {
         const fetchUsers = async () => {
@@ -55,7 +54,7 @@ export default function SideBar() {
         isLoading ? (
             <Box>
                 {Array.from(new Array(3)).map((_, index) => (
-                    <UserCard key={index} />
+                    <UserLoading key={index} />
                 ))}
             </Box>
         ) : (
@@ -71,7 +70,7 @@ export default function SideBar() {
 
     )
 
-    if(!currentUser) return 
+    if (!currentUser) return
 
 
     return (

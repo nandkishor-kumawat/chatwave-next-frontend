@@ -1,8 +1,8 @@
 "use client"
 import { setCurrentUser } from '@/redux/features/userSlice';
-import { useAppDispatch, useAppSelector } from '@/redux/store';
-import { redirect, usePathname, useRouter } from 'next/navigation';
-import React, { use, useEffect, useState } from 'react'
+import { useAppDispatch } from '@/redux/store';
+import { usePathname } from 'next/navigation';
+import React, { useEffect, useState } from 'react'
 import LinearProgressBar from './progress/LinearProgressBar';
 import { useSession } from 'next-auth/react';
 import { useSocket } from '@/lib/providers/socket-provider';
@@ -23,7 +23,7 @@ const Splash = () => {
 
     const { socket, isConnected } = useSocket();
 
-    console.log(socket?.id, isConnected)
+    // console.log(socket?.id, isConnected)
 
 
     useEffect(() => {
@@ -39,7 +39,7 @@ const Splash = () => {
     if (pathname === '/login' || pathname === '/signup') return null
 
     if (!isUser) return <LinearProgressBar onEnd={handleClose} />
-    
+
     return null
 }
 

@@ -5,6 +5,7 @@ import { useAppSelector } from '@/redux/store'
 import { ICE_SERVERS } from '@/config/servers'
 import { Button, ButtonGroup } from '@mui/material'
 import { useSocket } from '@/lib/providers/socket-provider'
+import { SOCKET_ACTIONS } from '@/constants/socket-actions'
 
 
 const CallPage = () => {
@@ -46,7 +47,7 @@ const CallPage = () => {
         socket.on('answer', handleAnswer);
         socket.on('ice-candidate', handlerNewIceCandidateMsg);
 
-        socket.on('change-media', (a: any) => {
+        socket.on(SOCKET_ACTIONS.CHANGE_MEDIA, (a: any) => {
             console.log(a)
         })
 
@@ -186,16 +187,18 @@ const CallPage = () => {
 
         connection.ontrack = (event) => {
             remoteVideoRef.current!.srcObject = event.streams[0];
+            console.log(event)
         };
 
         return connection;
     };
 
     const toggleMediaStream = (type: string, state: boolean) => {
+        socket.emit(SOCKET_ACTIONS.CHANGE_MEDIA, roomName, { type, state: !state });
         localStreamRef.current!.getTracks().forEach((track) => {
             if (track.kind === type) {
                 track.enabled = !state;
-                socket.emit('change-media', roomName, { type, state: !state });
+                socket.emit(SOCKET_ACTIONS.CHANGE_MEDIA, roomName, { type, state: !state });
             }
         });
     };

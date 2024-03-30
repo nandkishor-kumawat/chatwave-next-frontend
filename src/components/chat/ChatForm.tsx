@@ -2,10 +2,6 @@ import React, { useState } from 'react'
 import { Box, Divider, FormControl, Button } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/redux/store';
 import Textarea from '../styled/TextArea';
-import { serverTimestamp } from 'firebase/firestore';
-
-
-
 
 
 type PropTypes = {
@@ -64,7 +60,7 @@ const ChatForm = ({ sendMessage }: PropTypes) => {
                                 name='message'
                                 placeholder="Type your message..."
                                 className='scrollbar'
-                                onChange={e => setMessage(e.target.value.trim())}
+                                onChange={(e:any) => setMessage(e.target.value.trim())}
                                 ref={textref}
                                 id="message"
                             />

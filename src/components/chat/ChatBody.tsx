@@ -27,8 +27,8 @@ const ChatBody = ({ messages }: PropTypes) => {
                 <Box className="h-full w-full overflow-y-auto scrollbar" ref={chatBodyRef}>
                     <Box className='flex flex-col px-2 pb-2'>
                         {messages.filter((message: any) =>
-                            (message.receiver_id === secondUser.email && message.sender_id === currentUser.email) ||
-                            (message.receiver_id === currentUser.email && message.sender_id === secondUser.email)
+                            (message.receiver_id === secondUser?.email && message.sender_id === currentUser?.email) ||
+                            (message.receiver_id === currentUser?.email && message.sender_id === secondUser?.email)
                         ).map((message: any, i: number) => (
                             <ChatBubble key={i} message={message} />
                         ))}

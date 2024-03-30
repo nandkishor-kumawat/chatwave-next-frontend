@@ -49,7 +49,7 @@ const VideoCall = () => {
 
         socket.on('start_call', handleStartCall)
 
-        socket.on('webrtc_offer', async (event) => {
+        socket.on('webrtc_offer', async (event:any) => {
             console.log(`Socket event callback: webrtc_offer. RECEIVED from ${event.senderId}`)
             const remotePeerId = event.senderId;
           
@@ -65,7 +65,7 @@ const VideoCall = () => {
             await createAnswer(peerConnections.current[remotePeerId], remotePeerId)
           })
 
-        socket.on('webrtc_answer', async (event) => {
+        socket.on('webrtc_answer', async (event:any) => {
             console.log(`Socket event callback: webrtc_answer. RECEIVED from ${event.senderId}`)
           
             console.log(`Remote description set on peer ${localPeerId.current} after answer received`)
@@ -77,7 +77,7 @@ const VideoCall = () => {
           /**
            * Mensaje webrtc_ice_candidate. Candidato ICE recibido de otro par
            */
-          socket.on('webrtc_ice_candidate', (event) => {
+          socket.on('webrtc_ice_candidate', (event:any) => {
             const senderPeerId = event.senderId;
             console.log(`Socket event callback: webrtc_ice_candidate. RECEIVED from ${senderPeerId}`)
           

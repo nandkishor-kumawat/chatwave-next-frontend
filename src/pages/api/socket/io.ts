@@ -2,6 +2,7 @@ import { Server as NetServer } from 'http';
 import { NextApiRequest } from 'next';
 import { Server as ServerIO } from 'socket.io';
 import { NextApiResponseServerIo, User } from '@/lib/types';
+import { SOCKET_ACTIONS } from '@/constants/socket-actions';
 
 export const config = {
   api: {
@@ -35,7 +36,7 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseServerIo) => {
     });
     io.on('connection', (socket) => {
       console.log(socket.id, 'connected')
-      socket.on('newUser', (email: string) => {
+      socket.on(SOCKET_ACTIONS.NEW_USER, (email: string) => {
         const data = {
           email: email,
           name: email.split('@')[0],
@@ -46,7 +47,7 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseServerIo) => {
           }
         }
         addUser(data);
-        io.emit('newUserResponse', users);
+        io.emit(SOCKET_ACTIONS.NEW_USER_RESPONSE, users);
       });
 
       socket.on('typing', (from: string, status: boolean, to: string) => {
@@ -55,7 +56,7 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseServerIo) => {
           user.typing.to = to;
           user.typing.status = status;
         }
-        io.emit('newUserResponse', users);
+        io.emit(SOCKET_ACTIONS.NEW_USER_RESPONSE, users);
       });
 
       socket.on('message', (data: any) => {
@@ -67,32 +68,32 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseServerIo) => {
         const room = rooms.get(roomId);
         console.log(room)
         if (!room) {
-          io.emit("room:created",{
+          io.emit(SOCKET_ACTIONS.ROOM_CREATED,{
             roomId: roomId,
             peerId: socket.id
           });
-          console.log("room:created")
+          console.log(SOCKET_ACTIONS.ROOM_CREATED)
           socket.join(roomId);
         } else if (room.size !== 7) {
 
-          io.emit("room:joined",{
+          io.emit(SOCKET_ACTIONS.ROOM_JOINED,{
             roomId: roomId,
             peerId: socket.id
           })
 
-          console.log("room:joined")
+          console.log(SOCKET_ACTIONS.ROOM_JOINED)
           socket.join(roomId);
         } else {
-          io.emit("room:full");
-          console.log("room:full")
+          io.emit(SOCKET_ACTIONS.ROOM_FULL);
+          console.log(SOCKET_ACTIONS.ROOM_FULL)
         }
 
       })
 
-      socket.on('change-media', (room, data) => {
+      socket.on(SOCKET_ACTIONS.CHANGE_MEDIA, (room, data) => {
         console.log('change media')
         // console.log(io.sockets.adapter.rooms.get(room));
-        io.to(room).emit('change-media', data);
+        io.to(room).emit(SOCKET_ACTIONS.CHANGE_MEDIA, data);
       })
 
  
@@ -152,7 +153,7 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseServerIo) => {
         console.log(socket.id, '🔥: A user disconnected');
         removeUser(socket.id as string);
         // socket.leave(socket.id as string);
-        io.emit('newUserResponse', users);
+        io.emit(SOCKET_ACTIONS.NEW_USER_RESPONSE, users);
         io.emit('leave')
       });
     });

@@ -1,10 +1,11 @@
-'use client'
 import PermanentDrawer from '@/components/sidebar/PermanentDrawer';
 import Link from 'next/link';
+import { getAuthSession } from './api/auth/[...nextauth]/options';
 
 
-export default function Home() {
-
+export default async function Home() {
+  const auth = await getAuthSession();
+  console.log(auth)
 
   return (
     <div className='w-full h-full'>

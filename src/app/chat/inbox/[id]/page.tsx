@@ -11,7 +11,7 @@ import Loader from '@/components/progress/Loader';
 const Inbox = () => {
   const params = useParams();
   const secondUser = useAppSelector((state) => state.user.secondUser);
-  const onlineUsers = useAppSelector((state) => state.user.onlineUsers);
+  // const onlineUsers = useAppSelector((state) => state.user.onlineUsers);
   const dispatch = useAppDispatch()
   const [isLoading, setIsLoading] = React.useState(!(params?.id && secondUser));
 
