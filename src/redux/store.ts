@@ -1,6 +1,6 @@
 "use client";
 
-import userReducer from "./features/userSlice";
+import { userReducer } from "./features";
 import logger from 'redux-logger'
 
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
@@ -10,7 +10,7 @@ import { useDispatch, TypedUseSelectorHook, useSelector } from "react-redux";
 
 const rootReducer = combineReducers({
   user: userReducer,
-},);
+});
 
 
 export const store = configureStore({

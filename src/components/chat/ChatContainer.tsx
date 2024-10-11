@@ -4,54 +4,48 @@ import { Box } from '@mui/material'
 import ChatHeader from './ChatHeader';
 import ChatBody from './ChatBody';
 import ChatForm from './ChatForm';
-import useChat from '@/hooks/useChat';
-import { useAppSelector } from '@/redux/store';
-import { usePathname } from 'next/navigation';
-import { useSession } from 'next-auth/react';
+import { useAppDispatch, useAppSelector } from '@/redux/store';
+import { userActions } from '@/redux/features'
 
-type PropTypes = {
-    messages: any
-    onlineUsers: any
-    typingUsers: any
-    sendMessage: (data: any) => void
+interface ChatContainerProps {
+    secondUserId: string;
 }
 
-const ChatContainer = () => {
-    const {
-        messages,
-        onlineUsers,
-        typingUsers,
-        sendMessage
-    } = useChat()
-    const pathname = usePathname()
-    const secondUser = useAppSelector((state) => state.user.secondUser);
 
+const ChatContainer: React.FC<ChatContainerProps> = ({
+    secondUserId
+}) => {
+    const { conversations } = useAppSelector((state) => state.user);
+    const dispatch = useAppDispatch();
 
-    if (pathname === '/chat' || !secondUser) return null
+    const messages = React.useMemo(() => {
+        if (secondUserId in conversations) {
+            return conversations[secondUserId];
+        }
+        fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/conversations/${secondUserId}`, {
+            cache: 'no-cache',
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                dispatch(userActions.setConversations({ userId: secondUserId, conversations: data.conversations }));
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+        return [];
+    }, [conversations, secondUserId, dispatch]);
 
     return (
-        <Box className='relative h-full flex  max-w-full flex-1 overflow-hidden'>
+        <Box className='relative h-full flex max-w-full flex-1 overflow-hidden'>
             <Box component={'main'} className='relative h-full w-full flex-1 overflow-hidden transition-width'>
                 <Box className='flex h-full flex-col' role='presentation'>
-                    <ChatHeader onlineUsers={onlineUsers} typingUsers={typingUsers} />
+                    <ChatHeader />
                     <ChatBody messages={messages} />
-                    <ChatForm key={secondUser.id} sendMessage={sendMessage} />
+                    <ChatForm key={secondUserId} />
                 </Box>
             </Box>
-            {/* <Box className='w-[250px] bg-slate-400'>
-                <div>hello 1</div>
-                <div>hello 2</div>
-                <div>hello 3</div>
-                <div>hello 4</div>
-                <div>hello 5</div>
-                <div>hello 6</div>
-                <div>hello 7</div>
-                <div>hello 8</div>
-                <div>hello 9</div>
-                <div>hello 10</div>
-            </Box> */}
         </Box>
     )
 }
 
-export default React.memo(ChatContainer);
+export default ChatContainer;

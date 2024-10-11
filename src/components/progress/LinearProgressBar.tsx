@@ -3,9 +3,9 @@ import * as React from 'react';
 import LinearProgress, { LinearProgressProps } from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { useSession } from 'next-auth/react';
-import { setCurrentUser } from '@/redux/features/userSlice';
+import { userActions } from '@/redux/features'
 import { useAppDispatch } from '@/redux/store';
+import { useSession } from '@/hooks';
 
 function LinearProgressWithLabel(props: LinearProgressProps & { value: number }) {
   return (
@@ -32,16 +32,15 @@ function LinearProgressWithLabel(props: LinearProgressProps & { value: number })
 
 export default function LinearProgressBar({ onEnd }: { onEnd: () => void }) {
   const dispatch = useAppDispatch();
-  const { data } = useSession();
-
+  const { session: data } = useSession();
 
 
   React.useEffect(() => {
     if (data?.user) {
-      dispatch(setCurrentUser(data.user));
+      dispatch(userActions.setCurrentUser(data.user));
     }
   }, [data, dispatch])
-  
+
   const [progress, setProgress] = React.useState(0);
 
   React.useEffect(() => {

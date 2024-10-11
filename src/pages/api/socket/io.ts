@@ -1,8 +1,9 @@
 import { Server as NetServer } from 'http';
 import { NextApiRequest } from 'next';
 import { Server as ServerIO } from 'socket.io';
-import { NextApiResponseServerIo, User } from '@/lib/types';
-import { SOCKET_ACTIONS } from '@/constants/socket-actions';
+import { NextApiResponseServerIo } from '@/lib/types';
+import { SOCKET_ACTIONS } from '@/constants';
+import { User } from '@prisma/client';
 
 export const config = {
   api: {
@@ -10,43 +11,45 @@ export const config = {
   },
 };
 
+let users: any[] = [];
 
+const addUser = (user: User) => {
+  const index = users.findIndex((u) => u.id === user.id);
+  if (index !== -1) users.splice(index, 1);
+  users.push(user)
+}
+
+const removeUser = (id: string) => {
+  const index = users.findIndex((user) => user.socketId === id);
+  users.splice(index, 1);
+}
+
+const getSId = (userId: string) => {
+  const user = users.find((user) => user.id === userId);
+  return user?.socketId as string;
+}
 
 const ioHandler = (req: NextApiRequest, res: NextApiResponseServerIo) => {
-  let users: User[] = [];
-
-  const addUser = (user: User) => {
-    const index = users.findIndex((u) => u.id === user.id);
-    if (index !== -1) users.splice(index, 1);
-    users.push(user)
-  }
-
-  const removeUser = (id: String) => {
-    const index = users.findIndex((user) => user.id === id);
-    users.splice(index, 1);
-  }
 
   if (!res.socket.server.io) {
     const path = '/api/socket/io';
     const httpServer: NetServer = res.socket.server as any;
     const io = new ServerIO(httpServer, {
       path: path,
-      // @ts-ignore
       addTrailingSlash: false,
     });
+
     io.on('connection', (socket) => {
       console.log(socket.id, 'connected')
-      socket.on(SOCKET_ACTIONS.NEW_USER, (email: string) => {
-        const data = {
-          email: email,
-          name: email.split('@')[0],
-          id: socket.id,
+      socket.on(SOCKET_ACTIONS.NEW_USER, (data: any) => {
+        addUser({
+          ...data,
+          socketId: socket.id,
           typing: {
             status: false,
             to: null
           }
-        }
-        addUser(data);
+        });
         io.emit(SOCKET_ACTIONS.NEW_USER_RESPONSE, users);
       });
 
@@ -59,36 +62,51 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseServerIo) => {
         io.emit(SOCKET_ACTIONS.NEW_USER_RESPONSE, users);
       });
 
-      socket.on('message', (data: any) => {
-        io.emit('message', data);
+      socket.on(SOCKET_ACTIONS.MESSAGE, (data: any) => {
+        const { receiverId } = data;
+        const receiver = getSId(receiverId);
+        io.to(receiver).emit(SOCKET_ACTIONS.MESSAGE, data);
       })
 
-      socket.on('room:join', (roomId: string) => {
+      socket.on(SOCKET_ACTIONS.ROOM_JOINED, (roomId: string, id: string) => {
         const { rooms } = io.sockets.adapter;
         const room = rooms.get(roomId);
-        console.log(room)
-        if (!room) {
-          io.emit(SOCKET_ACTIONS.ROOM_CREATED,{
-            roomId: roomId,
-            peerId: socket.id
-          });
-          console.log(SOCKET_ACTIONS.ROOM_CREATED)
-          socket.join(roomId);
-        } else if (room.size !== 7) {
 
-          io.emit(SOCKET_ACTIONS.ROOM_JOINED,{
-            roomId: roomId,
-            peerId: socket.id
-          })
+        io.emit(SOCKET_ACTIONS.ROOM_JOINED, { roomId: roomId, peerId: socket.id });
+        socket.join(roomId);
+        console.log(SOCKET_ACTIONS.ROOM_JOINED, roomId, socket.id);
 
-          console.log(SOCKET_ACTIONS.ROOM_JOINED)
-          socket.join(roomId);
-        } else {
-          io.emit(SOCKET_ACTIONS.ROOM_FULL);
-          console.log(SOCKET_ACTIONS.ROOM_FULL)
-        }
-
+        socket.on('disconnect', () => {
+          removeUser(socket.id as string);
+          socket.leave(roomId);
+          io.to(roomId).emit("leave", socket.id);
+        });
       })
+
+      socket.on("room:join", (data) => {
+        const { email, room } = data;
+        io.to(room).emit("user:joined", { email, id: socket.id });
+        socket.join(room);
+        io.to(socket.id).emit("room:join", data);
+      });
+
+      socket.on("user:call", ({ to, offer }) => {
+        io.to(to).emit("incomming:call", { from: socket.id, offer });
+      });
+
+      socket.on("call:accepted", ({ to, ans }) => {
+        io.to(to).emit("call:accepted", { from: socket.id, ans });
+      });
+
+      socket.on("peer:nego:needed", ({ to, offer }) => {
+        console.log("peer:nego:needed", offer);
+        io.to(to).emit("peer:nego:needed", { from: socket.id, offer });
+      });
+
+      socket.on("peer:nego:done", ({ to, ans }) => {
+        console.log("peer:nego:done", ans);
+        io.to(to).emit("peer:nego:final", { from: socket.id, ans });
+      });
 
       socket.on(SOCKET_ACTIONS.CHANGE_MEDIA, (room, data) => {
         console.log('change media')
@@ -96,66 +114,28 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseServerIo) => {
         io.to(room).emit(SOCKET_ACTIONS.CHANGE_MEDIA, data);
       })
 
- 
-      // Triggered when the person who joined the room is ready to communicate.
-      socket.on("call:ready", (roomName) => {
-        io.to(roomName).emit("call:ready"); // Informs the other peer in the room.
-      });
+      socket.on(SOCKET_ACTIONS.OFFER, (data) => {
+        console.log(SOCKET_ACTIONS.OFFER)
+        io.to(data.roomId).emit(SOCKET_ACTIONS.OFFER, data);
+      })
 
-      // Triggered when server gets an icecandidate from a peer in the room.
-      socket.on("ice-candidate", (candidate: RTCIceCandidate, roomName: string) => {
-        console.log(candidate);
-        io.to(roomName).emit("ice-candidate", candidate); // Sends Candidate to the other peer in the room.
-      });
+      socket.on(SOCKET_ACTIONS.ANSWER, (data) => {
+        console.log(SOCKET_ACTIONS.ANSWER)
+        io.to(data.roomId).emit(SOCKET_ACTIONS.ANSWER, data);
+      })
 
-      // Triggered when server gets an offer from a peer in the room.
-      socket.on("offer", (offer, roomName) => {
-        io.to(roomName).emit("offer", offer); // Sends Offer to the other peer in the room.
-      });
-
-      // Triggered when server gets an answer from a peer in the room.
-      socket.on("answer", (answer, roomName) => {
-        io.to(roomName).emit("answer", answer); // Sends Answer to the other peer in the room.
-      });
-
-      socket.on("leave", (roomName) => {
-        socket.leave(roomName);
-        io.to(roomName).emit("leave");
-      });
-
-      socket.on('start_call', (event) => {
-        console.log(`Broadcasting start_call event to peers in room ${event.roomId} from peer ${event.senderId}`)
-        io.to(event.roomId).emit('start_call', {
-          senderId: event.senderId
-      })})
-    
-      //Events emitted to only one peer
-      socket.on('webrtc_offer', (event) => {
-        console.log(`Sending webrtc_offer event to peers in room ${event.roomId} from peer ${event.senderId} to peer ${event.receiverId}`)
-        io.to(event.receiverId).emit('webrtc_offer', {
-          sdp: event.sdp,
-          senderId: event.senderId
-      })})
-    
-      socket.on('webrtc_answer', (event) => {
-        console.log(`Sending webrtc_answer event to peers in room ${event.roomId} from peer ${event.senderId} to peer ${event.receiverId}`)
-        io.to(event.receiverId).emit('webrtc_answer', {
-          sdp: event.sdp,
-          senderId: event.senderId
-      })})
-    
-      socket.on('webrtc_ice_candidate', (event) => {
-        console.log(`Sending webrtc_ice_candidate event to peers in room ${event.roomId} from peer ${event.senderId} to peer ${event.receiverId}`)
-        io.to(event.receiverId).emit('webrtc_ice_candidate', event)
+      socket.on('ice-candidate', (data) => {
+        console.log('ice-candidate')
+        io.to(data.roomId).emit('ice-candidate', data);
       })
 
       socket.on('disconnect', () => {
         console.log(socket.id, '🔥: A user disconnected');
         removeUser(socket.id as string);
-        // socket.leave(socket.id as string);
+        socket.leave(socket.id as string);
         io.emit(SOCKET_ACTIONS.NEW_USER_RESPONSE, users);
-        io.emit('leave')
       });
+
     });
     res.socket.server.io = io;
   }

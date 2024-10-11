@@ -2,7 +2,7 @@
 import { Skeleton, Box, Stack, Avatar, Typography, Divider } from '@mui/material'
 import React from 'react'
 import { useAppDispatch, useAppSelector } from '@/redux/store';
-import { switchUser } from '@/redux/features/userSlice';
+import { userActions } from '@/redux/features'
 import StyledBadge from './styled/StyledBadge';
 import { useParams, useRouter } from 'next/navigation';
 
@@ -12,21 +12,21 @@ type propTypes = {
         name: string;
         email: string;
     },
-    isOnline?: boolean;
 }
 
-const UserCard = ({ user, isOnline }: propTypes) => {
+const UserCard = ({ user }: propTypes) => {
 
-    const dispatch = useAppDispatch()
-    const secondUser = useAppSelector((state) => state.user.secondUser);
+    const dispatch = useAppDispatch();
+    const { secondUser, onlineUsers } = useAppSelector((state) => state.user);
     const router = useRouter();
     const params = useParams();
 
     const changeUser = () => {
-        dispatch(switchUser(user))
-        router.replace(`/chat/inbox/${user.id}`);
+        dispatch(userActions.switchUser(user))
+        router.replace(`/chat/u/${user.id}`);
     }
 
+    const isOnline = onlineUsers.find((u) => u.id === user.id);
 
     return (
 

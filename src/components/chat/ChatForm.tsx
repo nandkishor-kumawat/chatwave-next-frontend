@@ -1,36 +1,42 @@
+"use client"
 import React, { useState } from 'react'
 import { Box, Divider, FormControl, Button } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@/redux/store';
 import Textarea from '../styled/TextArea';
+import { chatActions } from '@/actions';
+import { Conversation } from '@prisma/client';
+import { userActions } from '@/redux/features'
+import { useChat, useSession } from '@/hooks';
+import { useSocket } from '../providers';
+import { SOCKET_ACTIONS } from '@/constants';
 
+const ChatForm = () => {
 
-type PropTypes = {
-    sendMessage: (data: any) => void
-}
-
-const ChatForm = ({ sendMessage }: PropTypes) => {
-
-
-    const dispatch = useAppDispatch();
     const [message, setMessage] = useState<string>('')
     const secondUser = useAppSelector((state) => state.user.secondUser)
-    const currentUser = useAppSelector((state) => state.user.currentUser)
     const textref = React.useRef<any>(null)
+    const dispatch = useAppDispatch();
+    const { session } = useSession();
+    const { socket } = useSocket();
 
-
-    const handleSubmit = (e: any) => {
+    const handleSubmit = async (e: any) => {
         e.preventDefault();
-        sendMessage({
-            receiver_id: secondUser.email,
-            sender_id: currentUser.email,
+        const data = {
+            senderId: session?.user?.id,
+            receiverId: secondUser.id,
             message,
-            sentAt: Date.now()
-        })
+            sentAt: new Date()
+        } as Conversation;
+        dispatch(userActions.addConversation({ userId: secondUser.id, conversation: data }))
         setMessage('');
-        e.target.message.value = ''
-        textref.current.focus()
+        e.target.message.value = '';
+        textref.current.focus();
+        const msg = await chatActions.sendMessage(data);
+        if (msg) {
+            dispatch(userActions.addConversation({ userId: secondUser.id, conversation: msg, replace: true }));
+            socket.emit(SOCKET_ACTIONS.MESSAGE, msg);
+        }
     }
-
 
     return (
         <>
@@ -60,7 +66,7 @@ const ChatForm = ({ sendMessage }: PropTypes) => {
                                 name='message'
                                 placeholder="Type your message..."
                                 className='scrollbar'
-                                onChange={(e:any) => setMessage(e.target.value.trim())}
+                                onChange={(e: any) => setMessage(e.target.value.trim())}
                                 ref={textref}
                                 id="message"
                             />
@@ -74,9 +80,6 @@ const ChatForm = ({ sendMessage }: PropTypes) => {
                             }}>SEND</Button>
                     </FormControl>
                 </form>
-
-
-
             </Box>
         </>
     )

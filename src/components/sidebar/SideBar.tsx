@@ -1,14 +1,10 @@
-"use client"
 import * as React from 'react';
 import UserCard from '../UserCard';
 import PermanentDrawer from './PermanentDrawer';
 import TemporaryDrawer from './TemporaryDrawer';
-import { useAppSelector } from '@/redux/store';
 import { Box } from '@mui/material';
-import { db } from '@/firebase';
-import { collection, getDocs } from 'firebase/firestore';
-import useChat from '@/hooks/useChat';
-import UserLoading from '../user-loading';
+import { getAuth } from '@/lib/auth';
+import prisma from '@/lib/prisma';
 
 
 
@@ -23,54 +19,25 @@ type User = {
     email: string;
 }
 
-export default function SideBar() {
-    const { onlineUsers } = useChat()
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
-    const [open, setOpen] = React.useState<boolean>(false);
-    const currentUser = useAppSelector(state => state.user.currentUser);
-    const [allUsers, setAllUsers] = React.useState<User[]>([]);
+export default async function SideBar() {
+    const session = await getAuth();
+    const currentUser = session?.user;
 
-    React.useEffect(() => {
-        const fetchUsers = async () => {
-            setIsLoading(true)
-            const querySnapshot = await getDocs(collection(db, "users"));
-            const users = querySnapshot.docs.map(doc => doc.data()) as User[];
-            setAllUsers(users)
-            setIsLoading(false)
-        }
-        fetchUsers()
-    }, [])
-
-    const handleDrawerOpen = () => {
-        setOpen(true);
-    };
-
-    const handleDrawerClose = () => {
-        setOpen(prev => !prev);
-    };
+    const allUsers = await prisma.user.findMany();
 
 
     const listD = () => (
-        isLoading ? (
-            <Box>
-                {Array.from(new Array(3)).map((_, index) => (
-                    <UserLoading key={index} />
-                ))}
-            </Box>
-        ) : (
-            <Box>
-                {allUsers.filter((user) => user.email !== currentUser.email).map((user, index) => {
-                    const isOnline = onlineUsers.find((u: { email: string; }) => u.email === user.email);
-                    return (
-                        <UserCard key={index} user={user} isOnline={!!isOnline} />
-                    )
-                })}
-            </Box>
-        )
 
+        <Box>
+            {allUsers.filter((user) => user.email !== currentUser?.email).map((user, index) => {
+                return (
+                    <UserCard key={index} user={user} />
+                )
+            })}
+        </Box>
     )
 
-    if (!currentUser) return
+    if (!session?.user) return
 
 
     return (
@@ -79,9 +46,9 @@ export default function SideBar() {
                 {listD()}
             </PermanentDrawer>
 
-            <TemporaryDrawer open={open} handleDrawerClose={handleDrawerClose}>
+            {/* <TemporaryDrawer open={open} handleDrawerClose={handleDrawerClose}>
                 {listD()}
-            </TemporaryDrawer>
+            </TemporaryDrawer> */}
         </>
     );
 }

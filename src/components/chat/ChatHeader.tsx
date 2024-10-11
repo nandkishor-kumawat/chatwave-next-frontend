@@ -1,27 +1,27 @@
+"use client"
 import React from 'react'
 import { useAppSelector } from '@/redux/store'
 import { Box, Stack, Avatar, Typography, Divider, Button, ButtonGroup } from '@mui/material'
 import CallIcon from '@mui/icons-material/Call';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { redirect } from 'next/navigation'
 import Link from 'next/link';
-import { signOut } from 'next-auth/react';
 import { v4 as uuidv4 } from 'uuid';
+import { authActions } from '@/actions';
 
 type PropTypes = {
-    onlineUsers: any;
-    typingUsers: any;
+    onlineUsers?: any;
+    typingUsers?: any;
 }
 
 const ChatHeader = ({ onlineUsers, typingUsers }: PropTypes) => {
     const secondUser = useAppSelector((state) => state.user.secondUser);
-    const isOnline = onlineUsers.find((user: any) => user.email === secondUser.email);
-    const isTyping = typingUsers.find((user: any) => user.email === secondUser.email);
+    const isOnline = onlineUsers?.find((user: any) => user.email === secondUser.email);
+    const isTyping = typingUsers?.find((user: any) => user.email === secondUser.email);
 
 
     const showInfo = async () => {
-        await signOut()
+        await authActions.signOut();
     }
 
 
@@ -46,13 +46,17 @@ const ChatHeader = ({ onlineUsers, typingUsers }: PropTypes) => {
 
                     <ButtonGroup sx={{ flex: 1, justifyContent: 'flex-end', mr: 1 }}>
                         <Button variant='text'>
-                            <Link href={`/call?has_video=false&id=${secondUser?.id}&room=${uuidv4()}`}>
+                            <Link
+                                suppressHydrationWarning
+                                href={`/call?has_video=false&id=${secondUser?.id}&room=${uuidv4()}`}>
                                 <CallIcon sx={{ color: 'white' }} />
                             </Link>
                         </Button>
 
                         <Button variant='text'>
-                            <Link href={`/call?has_video=true&id=${secondUser?.id}&room=${uuidv4()}`}>
+                            <Link
+                                suppressHydrationWarning
+                                href={`/call?has_video=true&id=${secondUser?.id}&room=${uuidv4()}`}>
                                 <VideoCallIcon sx={{ color: 'white' }} />
                             </Link>
                         </Button>

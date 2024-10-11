@@ -1,26 +1,24 @@
-import { User } from "@/lib/types";
+import { Conversation, User } from "@prisma/client";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type UserState = {
-    message: string;
     secondUser: any;
-    currentUser: any,
+    currentUser: any;
+    conversations: Record<string, Conversation[]>;
+    onlineUsers: User[];
 };
 
 const initialState = {
-    message: '',
-    secondUser:null,
+    secondUser: null,
     currentUser: null,
+    conversations: {},
+    onlineUsers: [],
 } as UserState;
 
 export const user = createSlice({
     name: "user",
     initialState,
     reducers: {
-        setChatMessage: (state, action: PayloadAction<string>) => {
-            state.message = action.payload
-        },
-
         switchUser: (state, action: PayloadAction<any>) => {
             state.secondUser = action.payload
         },
@@ -28,12 +26,26 @@ export const user = createSlice({
         setCurrentUser: (state, action: PayloadAction<any>) => {
             state.currentUser = action.payload
         },
+
+        setConversations: (state, action: PayloadAction<{ userId: string, conversations: Conversation[] }>) => {
+            state.conversations[action.payload.userId] = action.payload.conversations
+        },
+
+        addConversation: (state, action: PayloadAction<{ userId: string, conversation: Conversation, replace?: boolean }>) => {
+            if (!state.conversations[action.payload.userId]) state.conversations[action.payload.userId] = [];
+            if (action.payload.replace) {
+                state.conversations[action.payload.userId].pop();
+                state.conversations[action.payload.userId].push(action.payload.conversation)
+            } else {
+                state.conversations[action.payload.userId].push(action.payload.conversation)
+            }
+        },
+
+        setOnlineUsers: (state, action: PayloadAction<User[]>) => {
+            state.onlineUsers = action.payload
+        }
     },
 });
 
-export const {
-    setChatMessage,
-    switchUser,
-    setCurrentUser
-} = user.actions;
-export default user.reducer;
+export const userActions = user.actions;
+export const userReducer = user.reducer;

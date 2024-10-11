@@ -1,77 +1,47 @@
 "use client"
-import { use, useEffect, useRef, useState } from "react";
-import { io } from "socket.io-client";
-import { User, Message } from "@/lib/types";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
-import { collection, doc, getDoc, onSnapshot, orderBy, query, setDoc, where } from "firebase/firestore";
-import { db } from "@/firebase";
-import { useSocket } from "@/lib/providers/socket-provider";
-import { SOCKET_ACTIONS } from "@/constants/socket-actions";
-
+import { useCallback, useEffect } from "react";
+import { useAppDispatch } from "@/redux/store";
+import { useSocket } from "@/components/providers";
+import { SOCKET_ACTIONS } from "@/constants";
+import useSession from "./useSession";
+import { userActions } from '@/redux/features'
+import { Conversation, User } from "@prisma/client";
 
 
 export default function useChat() {
-
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
-    const [typingUsers, setTypingUsers] = useState<any[]>([]);
-    const currentUser = useAppSelector(state => state.user.currentUser)
+    const { session } = useSession();
+    const currentUser = session?.user;
 
     const { socket, isConnected } = useSocket()
     const dispatch = useAppDispatch();
 
-    useEffect(() => {
-
-        const messagesCollection = collection(db, 'messages');
-        const q = query(messagesCollection, orderBy("sentAt", "asc"),);
-
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            const messages = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })) as Message[];
-            setMessages(messages);
-        });
-        return () => unsubscribe();
-    }, []);
 
     useEffect(() => {
         if (!socket || !currentUser) return
-        socket.emit(SOCKET_ACTIONS.NEW_USER, currentUser.email);
-        return () => {
-            socket.off(SOCKET_ACTIONS.NEW_USER);
-        }
+        socket.emit(SOCKET_ACTIONS.NEW_USER, currentUser);
     }, [socket, currentUser]);
+
+    const handleMessage = useCallback((data: Conversation) => {
+        dispatch(userActions.addConversation({ userId: data.senderId, conversation: data }))
+    }, [dispatch]);
+
+    const handleNewUser = useCallback((users: User[]) => {
+        console.log(JSON.stringify(users, null, 2));
+        dispatch(userActions.setOnlineUsers(users));
+    }, [dispatch]);
 
     useEffect(() => {
         if (!socket) return
 
-        socket.on('message', (data: any) => {
-            console.log(data)
-            // setMessages((prev: any) => [...prev, data]);
-        });
-
-        socket.on(SOCKET_ACTIONS.NEW_USER_RESPONSE, (users: User[]) => {
-            setOnlineUsers(users);
-        });
+        socket.on(SOCKET_ACTIONS.MESSAGE, handleMessage);
+        socket.on(SOCKET_ACTIONS.NEW_USER_RESPONSE, handleNewUser);
 
         return () => {
-            socket.off('message');
-            socket.off(SOCKET_ACTIONS.NEW_USER_RESPONSE);
+            socket.off(SOCKET_ACTIONS.MESSAGE, handleMessage);
+            socket.off(SOCKET_ACTIONS.NEW_USER_RESPONSE, handleNewUser);
         }
 
-    }, [socket]);
+    }, [socket, handleMessage, handleNewUser]);
 
-
-    const sendMessage = async (data: any) => {
-        if (!socket) return;
-        const docRef = doc(collection(db, "messages"));
-        socket.emit("message", { ...data, id: docRef.id });
-        setDoc(docRef, data)
-    }
-
-
-    return {
-        messages,
-        onlineUsers,
-        typingUsers,
-        sendMessage,
-    };
+    return {};
 }      

@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Providers {
+  google
+  credentials
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  email          String    @unique
+  name           String
+  username       String    @unique
+  password       String?
+  about          String?
+  country        String?
+  city           String?
+  role           Role      @default(USER)
+  profilePicture String?   @map("profile_picture")
+  coverPicture   String?   @map("cover_picture")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  sessions       Session[]
+
+  @@map("users")
+}
+
+model Session {
+  objectId  String     @id @default(auto()) @map("_id") @db.ObjectId
+  id        String     @unique @map("session_id")
+  userId    String     @map("user_id") @db.ObjectId
+  expiresAt DateTime?
+  provider  Providers? @default(credentials)
+  userAgent String?
+  ip        String?
+  browser   String?
+  os        String?
+  user      User       @relation(references: [id], fields: [userId], onDelete: Cascade)
+  createdAt DateTime   @default(now()) @map("created_at")
+
+  @@map("sessions")
+}
+
+model Files {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  type      String
+  size      Int
+  url       String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("files")
+}
+
+model Conversation {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  message    String
+  senderId   String  @map("sender_id") @db.ObjectId
+  receiverId String  @map("receiver_id") @db.ObjectId
+  read       Boolean @default(false)
+  isDeleted  Boolean @default(false) @map("is_deleted")
+
+  sentAt      DateTime  @default(now()) @map("sent_at")
+  deliveredAt DateTime? @map("delivered_at")
+  readAt      DateTime? @map("read_at")
+  deletedAt   DateTime? @map("deleted_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+}

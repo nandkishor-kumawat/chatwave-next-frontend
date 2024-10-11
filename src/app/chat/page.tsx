@@ -1,12 +1,12 @@
 "use client"
 import StartChat from '@/components/chat/StartChat'
-import { switchUser } from '@/redux/features/userSlice'
+import { userActions } from '@/redux/features'
 import { useAppDispatch } from '@/redux/store'
 import React from 'react'
 
 const Chat = () => {
   const dispatch = useAppDispatch()
-  dispatch(switchUser(null))
+  dispatch(userActions.switchUser(null))
 
   return (
     <StartChat />

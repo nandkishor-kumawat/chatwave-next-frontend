@@ -11,7 +11,6 @@ export default function chatLayout({
         <div className="h-full">
             <div className='relative z-0 flex h-full w-full overflow-hidden'>
                 <SideBar />
-                <ChatContainer />
                 {children}
             </div>
         </div>
