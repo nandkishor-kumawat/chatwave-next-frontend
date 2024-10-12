@@ -6,8 +6,8 @@ import CallIcon from '@mui/icons-material/Call';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Link from 'next/link';
-import { v4 as uuidv4 } from 'uuid';
 import { authActions } from '@/actions';
+import { useSession } from '@/hooks';
 
 type PropTypes = {
     onlineUsers?: any;
@@ -15,15 +15,19 @@ type PropTypes = {
 }
 
 const ChatHeader = ({ onlineUsers, typingUsers }: PropTypes) => {
-    const secondUser = useAppSelector((state) => state.user.secondUser);
+    const { secondUser } = useAppSelector((state) => state.user);
     const isOnline = onlineUsers?.find((user: any) => user.email === secondUser.email);
     const isTyping = typingUsers?.find((user: any) => user.email === secondUser.email);
 
+    const { session } = useSession();
+    const currentUserId = session?.user.id;
+    const secondUserId = secondUser?.id;
 
     const showInfo = async () => {
         await authActions.signOut();
     }
 
+    const roomId = btoa([currentUserId, secondUserId].sort().join('_'));
 
     // if(!secondUser) return null
     return (
@@ -45,18 +49,18 @@ const ChatHeader = ({ onlineUsers, typingUsers }: PropTypes) => {
 
 
                     <ButtonGroup sx={{ flex: 1, justifyContent: 'flex-end', mr: 1 }}>
-                        <Button variant='text'>
+                        {/* <Button variant='text'>
                             <Link
                                 suppressHydrationWarning
-                                href={`/call?has_video=false&id=${secondUser?.id}&room=${uuidv4()}`}>
+                                href={`/call?has_video=false&room=${roomId}`}>
                                 <CallIcon sx={{ color: 'white' }} />
                             </Link>
-                        </Button>
+                        </Button> */}
 
                         <Button variant='text'>
                             <Link
                                 suppressHydrationWarning
-                                href={`/call?has_video=true&id=${secondUser?.id}&room=${uuidv4()}`}>
+                                href={`/call?has_video=true&room=${roomId}`}>
                                 <VideoCallIcon sx={{ color: 'white' }} />
                             </Link>
                         </Button>

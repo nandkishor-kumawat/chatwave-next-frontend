@@ -111,11 +111,10 @@ export const signUp = async (formData: FormData) => {
 }
 
 export const signOut = async () => {
-    await fetch(process.env.NEXTAUTH_URL + '/api/auth/signout', {
+    await fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/auth/signout', {
         headers: {
             cookie: cookies().toString()
         }
     })
     revalidatePath('/', 'layout')
-    // redirect(process.env.NEXTAUTH_URL + '/login', RedirectType.replace);
 }

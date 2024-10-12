@@ -1,6 +1,6 @@
 "use client"
 import { useCallback, useEffect } from "react";
-import { useAppDispatch } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { useSocket } from "@/components/providers";
 import { SOCKET_ACTIONS } from "@/constants";
 import useSession from "./useSession";
@@ -15,6 +15,8 @@ export default function useChat() {
     const { socket, isConnected } = useSocket()
     const dispatch = useAppDispatch();
 
+    const { onlineUsers } = useAppSelector((state) => state.user);
+
 
     useEffect(() => {
         if (!socket || !currentUser) return
@@ -26,7 +28,7 @@ export default function useChat() {
     }, [dispatch]);
 
     const handleNewUser = useCallback((users: User[]) => {
-        console.log(JSON.stringify(users, null, 2));
+        // console.log(JSON.stringify(users, null, 2));
         dispatch(userActions.setOnlineUsers(users));
     }, [dispatch]);
 
@@ -42,6 +44,16 @@ export default function useChat() {
         }
 
     }, [socket, handleMessage, handleNewUser]);
+
+
+    useEffect(() => {
+        if (!socket || !currentUser) return
+        const isMe = onlineUsers.find((user) => user.id === currentUser.id);
+        if (!isMe) {
+            socket.emit(SOCKET_ACTIONS.NEW_USER, currentUser);
+        }
+    }, [onlineUsers, socket, currentUser]);
+
 
     return {};
 }      

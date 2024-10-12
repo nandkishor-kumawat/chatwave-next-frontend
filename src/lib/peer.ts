@@ -1,16 +1,12 @@
+import { PEER_CONFIG } from "@/config/peer";
+
 class PeerService {
+   //@ts-ignore
    peer: RTCPeerConnection;
+
    constructor() {
-      this.peer = new RTCPeerConnection({
-         iceServers: [
-            {
-               urls: [
-                  "stun:stun.l.google.com:19302",
-                  "stun:global.stun.twilio.com:3478",
-               ],
-            },
-         ],
-      });
+      if (typeof window === "undefined") return;
+      this.peer = new RTCPeerConnection(PEER_CONFIG);
    }
 
    async getAnswer(offer: RTCSessionDescriptionInit) {

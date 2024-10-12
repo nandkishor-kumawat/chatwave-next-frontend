@@ -12,7 +12,7 @@ const adapter = new PrismaAdapter(prisma.session, prisma.user);
 export const google = new Google(
     process.env.GOOGLE_CLIENT_ID!,
     process.env.GOOGLE_CLIENT_SECRET!,
-    process.env.NEXTAUTH_URL + "/api/auth/callback/google"
+    process.env.NEXT_PUBLIC_BASE_URL + "/api/auth/callback/google"
 );
 
 export const lucia = new Lucia(adapter, {

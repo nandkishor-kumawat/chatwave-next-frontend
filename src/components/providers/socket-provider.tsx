@@ -27,15 +27,25 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
       {
         path: '/api/socket/io',
         addTrailingSlash: false,
+        reconnection: true,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        timeout: 20000,
       }
     );
-
     socketInstance.on('connect', () => {
       setIsConnected(true);
+      console.log('Socket connected');
     });
 
-    socketInstance.on('disconnect', () => {
+    socketInstance.on('disconnect', (reason: string) => {
       setIsConnected(false);
+      console.log('Socket disconnected:', reason);
+    });
+
+    socketInstance.on('reconnect_attempt', (attempt: number) => {
+      console.log(`Reconnect attempt #${attempt}`);
     });
 
     setSocket(socketInstance);

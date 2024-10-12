@@ -1,4 +1,4 @@
-export const ICE_SERVERS = {
+export const PEER_CONFIG = {
     iceServers: [
         {
             urls: [

@@ -25,7 +25,7 @@ const ChatBody = ({ messages }: PropTypes) => {
             <Box className="h-full relative">
                 <Box className="h-full w-full overflow-y-auto scrollbar" ref={chatBodyRef}>
                     <Box className='flex flex-col px-2 pb-2'>
-                        {messages.map((message, i) => (
+                        {messages?.map((message, i) => (
                             <ChatBubble key={i} message={message} />
                         ))}
                     </Box>

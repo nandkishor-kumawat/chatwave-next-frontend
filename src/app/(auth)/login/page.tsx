@@ -77,7 +77,6 @@ export default function Page() {
         color: 'green'
       },
     });
-
     router.replace(callbackUrl);
   }
 

@@ -4,12 +4,14 @@ export const SOCKET_ACTIONS = {
     MESSAGE: 'message',
     CHANGE_MEDIA: 'change-media',
     NEW_USER_RESPONSE: 'new-user-response',
-    JOIN_ROOM: 'join-room',
     ROOM_CREATED: 'room:created',
     ROOM_JOINED: 'room:joined',
     ROOM_FULL: 'room:full',
 
-    ROOM_JOIN: 'room:join',
+    JOIN_ROOM: 'join-room',
+    ICE_CANDIDATE: 'ice-candidate',
     OFFER: 'offer',
     ANSWER: 'answer',
-}
+
+    CALL_DATA: 'call:data',
+} as const;

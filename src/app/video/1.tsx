@@ -1,5 +1,5 @@
 "use client";
-import { ICE_SERVERS } from '@/config/servers';
+import { PEER_CONFIG } from '@/config/peer';
 import { useSocket } from '@/components/providers/socket-provider';
 import { notFound, useSearchParams } from 'next/navigation';
 import React, { useCallback, useRef } from 'react'
@@ -57,7 +57,7 @@ const VideoCall = () => {
 
     const handleStartCall = async ({ roomId, senderId }: { roomId: string, senderId: string }) => {
         const remotePeerId = senderId;
-        peerConnections.current[remotePeerId] = new RTCPeerConnection(ICE_SERVERS)
+        peerConnections.current[remotePeerId] = new RTCPeerConnection(PEER_CONFIG)
         addLocalTracks(peerConnections.current[remotePeerId])
 
         peerConnections.current[remotePeerId].ontrack = (event) => setRemoteStream(event, remotePeerId)
@@ -108,7 +108,7 @@ const VideoCall = () => {
             console.log(`Socket event callback: webrtc_offer. RECEIVED from ${event.senderId}`)
             const remotePeerId = event.senderId;
 
-            peerConnections.current[remotePeerId] = new RTCPeerConnection(ICE_SERVERS)
+            peerConnections.current[remotePeerId] = new RTCPeerConnection(PEER_CONFIG)
             console.log(new RTCSessionDescription(event.sdp))
             peerConnections.current[remotePeerId].setRemoteDescription(new RTCSessionDescription(event.sdp))
             console.log(`Remote description set on peer ${localPeerId.current} after offer received`)

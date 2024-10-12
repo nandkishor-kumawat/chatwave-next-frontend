@@ -20,6 +20,7 @@ const addUser = (user: User) => {
 }
 
 const removeUser = (id: string) => {
+  console.log('removingt user', id)
   const index = users.findIndex((user) => user.socketId === id);
   users.splice(index, 1);
 }
@@ -41,6 +42,8 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseServerIo) => {
 
     io.on('connection', (socket) => {
       console.log(socket.id, 'connected')
+
+      // --------------------  CHAT FUNCTIONALITY -------------------- //
       socket.on(SOCKET_ACTIONS.NEW_USER, (data: any) => {
         addUser({
           ...data,
@@ -68,73 +71,45 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseServerIo) => {
         io.to(receiver).emit(SOCKET_ACTIONS.MESSAGE, data);
       })
 
-      socket.on(SOCKET_ACTIONS.ROOM_JOINED, (roomId: string, id: string) => {
-        const { rooms } = io.sockets.adapter;
-        const room = rooms.get(roomId);
 
-        io.emit(SOCKET_ACTIONS.ROOM_JOINED, { roomId: roomId, peerId: socket.id });
-        socket.join(roomId);
-        console.log(SOCKET_ACTIONS.ROOM_JOINED, roomId, socket.id);
-
-        socket.on('disconnect', () => {
-          removeUser(socket.id as string);
-          socket.leave(roomId);
-          io.to(roomId).emit("leave", socket.id);
-        });
-      })
-
+      // --------------------  VIDEO CALL FUNCTIONALITY -------------------- //
       socket.on("room:join", (data) => {
         const { email, room } = data;
-        io.to(room).emit("user:joined", { email, id: socket.id });
         socket.join(room);
+        socket.to(room).emit("user:joined", { email, id: socket.id });
         io.to(socket.id).emit("room:join", data);
+
+        socket.on('disconnect', () => {
+          console.log(socket.id, '🔥disconnected');
+          socket.leave(room);
+        })
       });
 
-      socket.on("user:call", ({ to, offer }) => {
-        io.to(to).emit("incomming:call", { from: socket.id, offer });
+      socket.on("user:call", ({ room, offer }) => {
+        socket.to(room).emit("incomming:call", { room, offer });
       });
 
-      socket.on("call:accepted", ({ to, ans }) => {
-        io.to(to).emit("call:accepted", { from: socket.id, ans });
+      socket.on("call:accepted", ({ room, ans }) => {
+        socket.to(room).emit("call:accepted", { room, ans });
       });
 
-      socket.on("peer:nego:needed", ({ to, offer }) => {
+      socket.on("peer:nego:needed", ({ room, offer }) => {
         console.log("peer:nego:needed", offer);
-        io.to(to).emit("peer:nego:needed", { from: socket.id, offer });
+        socket.to(room).emit("peer:nego:needed", { room, offer });
       });
 
-      socket.on("peer:nego:done", ({ to, ans }) => {
+      socket.on("peer:nego:done", ({ room, ans }) => {
         console.log("peer:nego:done", ans);
-        io.to(to).emit("peer:nego:final", { from: socket.id, ans });
+        socket.to(room).emit("peer:nego:final", { room, ans });
       });
 
-      socket.on(SOCKET_ACTIONS.CHANGE_MEDIA, (room, data) => {
-        console.log('change media')
-        // console.log(io.sockets.adapter.rooms.get(room));
-        io.to(room).emit(SOCKET_ACTIONS.CHANGE_MEDIA, data);
-      })
-
-      socket.on(SOCKET_ACTIONS.OFFER, (data) => {
-        console.log(SOCKET_ACTIONS.OFFER)
-        io.to(data.roomId).emit(SOCKET_ACTIONS.OFFER, data);
-      })
-
-      socket.on(SOCKET_ACTIONS.ANSWER, (data) => {
-        console.log(SOCKET_ACTIONS.ANSWER)
-        io.to(data.roomId).emit(SOCKET_ACTIONS.ANSWER, data);
-      })
-
-      socket.on('ice-candidate', (data) => {
-        console.log('ice-candidate')
-        io.to(data.roomId).emit('ice-candidate', data);
-      })
 
       socket.on('disconnect', () => {
         console.log(socket.id, '🔥: A user disconnected');
         removeUser(socket.id as string);
         socket.leave(socket.id as string);
         io.emit(SOCKET_ACTIONS.NEW_USER_RESPONSE, users);
-      });
+      })
 
     });
     res.socket.server.io = io;
