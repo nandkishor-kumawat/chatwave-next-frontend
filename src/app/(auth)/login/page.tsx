@@ -44,7 +44,7 @@ export default function Page() {
   })
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams?.get("callbackUrl") ?? '/';
+  const callbackUrl = searchParams?.get("callbackUrl") ?? '/chat';
 
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");

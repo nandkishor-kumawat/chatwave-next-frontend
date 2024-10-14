@@ -80,7 +80,7 @@ export default function ProfileForm() {
       },
     });
 
-    router.replace('/');
+    router.replace('/chat');
     setIsLoading(false)
 
   }

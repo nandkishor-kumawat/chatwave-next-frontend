@@ -1,25 +1,26 @@
 import { rdb } from "@/firebase";
 import { ref, set, get, onValue, remove, child, push } from "firebase/database";
-
+import { v4 as uuidv4 } from "uuid";
 
 class Fsocket {
-    id: string | null;
+    id: string;
+    connected: boolean = false;
     private targetRoom: string | undefined;
     private db: any;
 
     constructor() {
         this.db = rdb;
-        this.id = null;
+        this.id = uuidv4();
         this.targetRoom = undefined;
         this.createSocketId();
     }
 
     private async createSocketId() {
         try {
-            const socketRef = ref(this.db, "sockets");
-            const newSocketRef = push(socketRef);
-            this.id = newSocketRef.key; // Use the key as the socket ID
+            const newSocketRef = ref(this.db, `sockets/${this.id}`);
             await set(newSocketRef, { createdAt: new Date().toISOString() });
+            this.emit('connect', { connected: true });
+            this.connected = true;
             console.log(`Socket created with ID: ${this.id}`);
         } catch (error) {
             console.error("Error creating socket ID: ", error);
@@ -49,7 +50,7 @@ class Fsocket {
             }
             const eventRef = ref(this.db, path);
             await set(eventRef, theData);
-            console.log(`Event '${event}' emitted to room: ${this.targetRoom}`);
+            console.log(`Event '${event}' emitted with data: `, theData);
             this.targetRoom = undefined;
         } catch (error) {
             console.error(error);
