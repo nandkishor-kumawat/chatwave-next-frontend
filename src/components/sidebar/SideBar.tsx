@@ -46,9 +46,9 @@ export default async function SideBar() {
                 {listD()}
             </PermanentDrawer>
 
-            {/* <TemporaryDrawer open={open} handleDrawerClose={handleDrawerClose}>
+            <TemporaryDrawer>
                 {listD()}
-            </TemporaryDrawer> */}
+            </TemporaryDrawer>
         </>
     );
 }

@@ -24,6 +24,7 @@ export default function useChat() {
     }, [socket, currentUser]);
 
     const handleMessage = useCallback((data: Conversation) => {
+        console.log(data)
         dispatch(userActions.addConversation({ userId: data.senderId, conversation: data }))
     }, [dispatch]);
 
@@ -49,11 +50,17 @@ export default function useChat() {
     useEffect(() => {
         if (!socket || !currentUser) return
         const isMe = onlineUsers.find((user) => user.id === currentUser.id);
-        if (!isMe) {
-            socket.emit(SOCKET_ACTIONS.NEW_USER, currentUser);
-        }
+        // if (!isMe) {
+        //     socket.emit(SOCKET_ACTIONS.NEW_USER, currentUser);
+        // }
     }, [onlineUsers, socket, currentUser]);
 
+    useEffect(() => {
+        socket?.getSockets((sockets) => {
+            dispatch(userActions.setOnlineUsers(sockets));
+        })
+
+    }, [socket])
 
     return {};
 }      

@@ -1,25 +1,28 @@
+"use client";
+
 import React from 'react'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import {Box, Toolbar, IconButton, Drawer } from '@mui/material';
+import { Box, Toolbar, IconButton, Drawer } from '@mui/material';
 
-
-type Props = {
-    open: boolean,
-    handleDrawerClose: () => void,
-    children: React.ReactNode
-}
 
 const drawerWidth = 280;
 
 
-const TemporaryDrawer = ({ open, handleDrawerClose, children }: Props) => {
+const TemporaryDrawer = ({ children }: { children: React.ReactNode }) => {
+    const [open, setOpen] = React.useState(false);
+
+    const handleDrawerClose = () => {
+        setOpen(!open);
+    };
+
+
     return (
         <>
             <Box
                 sx={{
                     position: 'fixed',
-                    top: '120px',
+                    top: '100px',
                     left: '-10px',
                     zIndex: 1000,
                     display: { sm: 'none', xs: 'block' }
@@ -56,7 +59,6 @@ const TemporaryDrawer = ({ open, handleDrawerClose, children }: Props) => {
                     display: { sm: 'none', xs: 'block' }
                 }}
                 className='scrollbar'
-                
             >
                 <Toolbar sx={{ backgroundColor: 'transparent' }} />
 

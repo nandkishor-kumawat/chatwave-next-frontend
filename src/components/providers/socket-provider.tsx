@@ -1,16 +1,16 @@
 'use client';
 import { useSession } from '@/hooks';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { io as ClientIO } from 'socket.io-client';
-import Fsocket from '../../../firebase-socket';
+import { useSearchParams } from 'next/navigation';
+import FireSocket from 'firebase.io';
 
 type SocketContextType = {
-  socket: any | null;
+  socket: FireSocket;
   isConnected: boolean;
 };
 
 const SocketContext = createContext<SocketContextType>({
-  socket: null,
+  socket: null as any,
   isConnected: false,
 });
 
@@ -19,10 +19,11 @@ export const useSocket = () => {
 };
 
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
-  const [socket, setSocket] = useState<any>(null);
+  const [socket, setSocket] = useState<FireSocket>(null as any);
   const [isConnected, setIsConnected] = useState(false);
   const { session } = useSession();
-
+  const searchParams = new URLSearchParams(useSearchParams() as any);
+  const room = searchParams.get('room') || 'default';
 
 
   useEffect(() => {
@@ -38,10 +39,11 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     //     timeout: 20000,
     //   }
     // );
-    const socketInstance = new Fsocket();
+    const socketInstance = new FireSocket(process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL!);
     socketInstance.on('connect', () => {
       setIsConnected(true);
     });
+
 
     socketInstance.on('disconnect', (reason: string) => {
       setIsConnected(false);
@@ -53,6 +55,12 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
       socketInstance.disconnect();
     };
   }, []);
+
+  useEffect(() => {
+    if (session && socket) {
+      socket.mapId(session.userId);
+    }
+  }, [room, socket, session]);
 
 
   return (

@@ -6,9 +6,10 @@ import Textarea from '../styled/TextArea';
 import { chatActions } from '@/actions';
 import { Conversation } from '@prisma/client';
 import { userActions } from '@/redux/features'
-import { useChat, useSession } from '@/hooks';
+import { useSession } from '@/hooks';
 import { useSocket } from '../providers';
 import { SOCKET_ACTIONS } from '@/constants';
+import { useSearchParams } from 'next/navigation';
 
 const ChatForm = () => {
 
@@ -18,6 +19,8 @@ const ChatForm = () => {
     const dispatch = useAppDispatch();
     const { session } = useSession();
     const { socket } = useSocket();
+    const searchParams = new URLSearchParams(useSearchParams() as any);
+    const room = searchParams.get('room') || 'default';
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
@@ -28,13 +31,14 @@ const ChatForm = () => {
             sentAt: new Date()
         } as Conversation;
         dispatch(userActions.addConversation({ userId: secondUser.id, conversation: data }))
+        socket.toMapId(secondUser.id).emit(SOCKET_ACTIONS.MESSAGE, { ...data, sentAt: data.sentAt.toISOString() });
         setMessage('');
         e.target.message.value = '';
         textref.current.focus();
         const msg = await chatActions.sendMessage(data);
         if (msg) {
             dispatch(userActions.addConversation({ userId: secondUser.id, conversation: msg, replace: true }));
-            socket.emit(SOCKET_ACTIONS.MESSAGE, msg);
+            // socket.toMapId(secondUser.id).emit(SOCKET_ACTIONS.MESSAGE, msg);
         }
     }
 

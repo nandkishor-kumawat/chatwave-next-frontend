@@ -5,7 +5,7 @@ type UserState = {
     secondUser: any;
     currentUser: any;
     conversations: Record<string, Conversation[]>;
-    onlineUsers: User[];
+    onlineUsers: Partial<User>[];
 };
 
 const initialState = {
@@ -41,7 +41,7 @@ export const user = createSlice({
             }
         },
 
-        setOnlineUsers: (state, action: PayloadAction<User[]>) => {
+        setOnlineUsers: (state, action: PayloadAction<UserState["onlineUsers"]>) => {
             state.onlineUsers = action.payload
         }
     },

@@ -27,7 +27,6 @@ const PermanentDrawer = ({ children }: { children: React.ReactNode }) => {
             className='h-full'
         >
             <Toolbar />
-            <p className='py-3 text-center text-white'>{socket?.id}</p>
             <Box sx={{ overflow: 'auto' }} className='scrollbar'>
                 {children}
             </Box>
