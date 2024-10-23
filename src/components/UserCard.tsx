@@ -5,13 +5,10 @@ import { useAppDispatch, useAppSelector } from '@/redux/store';
 import { userActions } from '@/redux/features'
 import StyledBadge from './styled/StyledBadge';
 import { useParams, useRouter } from 'next/navigation';
+import { User } from '@prisma/client';
 
 type propTypes = {
-    user: {
-        id: string;
-        name: string;
-        email: string;
-    },
+    user: User
 }
 
 const UserCard = ({ user }: propTypes) => {

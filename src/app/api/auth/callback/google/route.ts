@@ -9,11 +9,10 @@ export async function GET(request: Request) {
     const state = url.searchParams.get('state');
     const storedState = cookies().get('google_oauth_state')?.value;
     const savedCodeVerifier = cookies().get("google_oauth_code_verifier")?.value;
+    const callbackUrl = cookies().get("google_oauth_callback_url")?.value ?? '/chat';
 
     if (!code || !state || !storedState || !savedCodeVerifier || state !== storedState) {
-        return new Response(null, {
-            status: 400
-        });
+        return new Response(null, { status: 400 });
     }
 
     try {
@@ -35,32 +34,29 @@ export async function GET(request: Request) {
         );
 
         const googleUser = await googleUserResponse.json();
+        const { email, name, picture } = googleUser;
 
-        let userId = "";
-        const existingUser = await prisma.user.findFirst({
-            where: {
-                email: googleUser.email,
+        const existingUser = await prisma.user.upsert({
+            where: { email },
+            create: {
+                email,
+                name,
+                profilePicture: picture,
+                username: email.split("@")[0],
             },
+            update: {}
         });
 
-        if (!existingUser) {
-            const newUser = await prisma.user.create({
-                data: {
-                    email: googleUser.email,
-                    name: googleUser.name,
-                    profilePicture: googleUser.picture,
-                    username: googleUser.email.split("@")[0],
-                },
-            });
-            userId = newUser.id;
-        }
+        await createSession(existingUser.id, 'google');
 
-        const session = await createSession(existingUser?.id ?? userId, 'google');
+        cookies().delete("google_oauth_state");
+        cookies().delete("google_oauth_code_verifier");
+        cookies().delete("google_oauth_callback_url");
 
         return new Response(null, {
             status: 302,
             headers: {
-                Location: "/",
+                Location: callbackUrl,
             },
         });
 

@@ -3,8 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { hash, verify } from "@node-rs/argon2";
 import prisma from "@/lib/prisma";
-import { cookies } from "next/headers";
+import { headers } from "next/headers";
 import { createSession } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 
 export const signIn = async ({
@@ -79,14 +80,10 @@ export const signUp = async (formData: FormData) => {
 
     try {
         const existingUser = await prisma.user.findFirst({
-            where: {
-                email
-            }
+            where: { email }
         })
         if (existingUser) {
-            return {
-                error: 'User already exists'
-            }
+            return { error: 'User already exists' }
         }
 
         const user = await prisma.user.create({
@@ -99,22 +96,19 @@ export const signUp = async (formData: FormData) => {
         })
         await createSession(user.id);
         revalidatePath('/', 'layout')
-        return {
-            user
-        }
+        return { user }
     } catch (error) {
         console.log(error)
-        return {
-            error: 'Error creating user'
-        }
+        return { error: 'Error creating user' }
     }
 }
 
 export const signOut = async () => {
     await fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/auth/signout', {
-        headers: {
-            cookie: cookies().toString()
-        }
+        headers: headers()
     })
+
+    const callbackUrl = new URL(headers().get('referer') ?? '/').pathname;
     revalidatePath('/', 'layout')
+    redirect(`/login?callbackUrl=${callbackUrl}`);
 }

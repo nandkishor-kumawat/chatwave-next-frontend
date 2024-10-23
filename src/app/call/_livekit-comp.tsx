@@ -13,12 +13,13 @@ import {
     useTracks,
 } from "@livekit/components-react";
 import { Track } from "livekit-client";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect } from "react";
 
 const LiveKitComp = ({ token, room }: { token: string; room: string }) => {
 
     const searchParams = useSearchParams();
+    const router = useRouter();
 
     const { socket, isConnected } = useSocket();
 
@@ -27,14 +28,15 @@ const LiveKitComp = ({ token, room }: { token: string; room: string }) => {
     }, []);
 
     const handleRoomLeave = useCallback(() => {
-
+        console.log('leaviong/...')
+        router.back();
     }, []);
 
 
 
     return (
         <LayoutContextProvider>
-            <span className='fixed top-4 left-4 w-3 h-3 rounded-full z-50 animate-pulse' style={{
+            <span className='absolute top-4 left-4 w-3 h-3 rounded-full z-50 animate-pulse' style={{
                 backgroundColor: isConnected ? 'green' : 'red'
             }}></span>
             <LiveKitRoom

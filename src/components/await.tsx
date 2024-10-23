@@ -1,7 +1,7 @@
 import React from 'react'
 
 type AwaitProps<T> = {
-    children: (data: T) => React.ReactElement,
+    children: (data: T) => JSX.Element,
     promise: Promise<T>
 };
 

@@ -5,50 +5,46 @@ import TemporaryDrawer from './TemporaryDrawer';
 import { Box } from '@mui/material';
 import { getAuth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { User } from '@prisma/client';
 
-
-
-type PropTypes = {
-    changeRoom: (room: string) => void;
-    onlineUsers: any[];
-    typingUsers: any[];
-}
-type User = {
-    id: string;
-    name: string;
-    email: string;
-}
 
 export default async function SideBar() {
     const session = await getAuth();
+
+    if (!session?.user) return null;
+
     const currentUser = session?.user;
 
-    const allUsers = await prisma.user.findMany();
+    const allUsers = await prisma.user.findMany({
+        where: {
+            email: {
+                not: currentUser.email
+            }
+        },
+        select: {
+            name: true,
+            email: true,
+            id: true,
+            coverPicture: true,
+            profilePicture: true,
+            createdAt: true
+        }
+    });
 
-
-    const listD = () => (
-
+    const listD = (
         <Box>
-            {allUsers.filter((user) => user.email !== currentUser?.email).map((user, index) => {
+            {allUsers.map((user, index) => {
                 return (
-                    <UserCard key={index} user={user} />
+                    <UserCard key={index} user={user as User} />
                 )
             })}
         </Box>
     )
 
-    if (!session?.user) return
-
-
     return (
         <>
-            <PermanentDrawer>
-                {listD()}
-            </PermanentDrawer>
-
-            <TemporaryDrawer>
-                {listD()}
-            </TemporaryDrawer>
+            <PermanentDrawer>{listD}</PermanentDrawer>
+            <TemporaryDrawer>{listD}</TemporaryDrawer>
         </>
     );
 }

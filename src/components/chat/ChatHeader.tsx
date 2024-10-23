@@ -8,6 +8,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Link from 'next/link';
 import { authActions } from '@/actions';
 import { useSession } from '@/hooks';
+import { useSocket } from '../providers';
 
 type PropTypes = {
     onlineUsers?: any;
@@ -18,6 +19,7 @@ const ChatHeader = ({ onlineUsers, typingUsers }: PropTypes) => {
     const { secondUser } = useAppSelector((state) => state.user);
     const isOnline = onlineUsers?.find((user: any) => user.email === secondUser.email);
     const isTyping = typingUsers?.find((user: any) => user.email === secondUser.email);
+    const { socket } = useSocket()
 
     const { session } = useSession();
     const currentUserId = session?.user.id;
@@ -25,6 +27,7 @@ const ChatHeader = ({ onlineUsers, typingUsers }: PropTypes) => {
 
     const showInfo = async () => {
         await authActions.signOut();
+        socket.disconnect()
     }
 
     const roomId = btoa([currentUserId, secondUserId].sort().join('_'));

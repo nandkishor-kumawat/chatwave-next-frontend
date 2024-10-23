@@ -7,7 +7,6 @@ import React from 'react'
 const Chat = () => {
   const dispatch = useAppDispatch()
   dispatch(userActions.switchUser(null))
-
   return (
     <StartChat />
   )
