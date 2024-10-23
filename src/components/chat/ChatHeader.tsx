@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { authActions } from '@/actions';
 import { useSession } from '@/hooks';
 import { useSocket } from '../providers';
+import { usePathname, useRouter } from 'next/navigation';
 
 type PropTypes = {
     onlineUsers?: any;
@@ -24,10 +25,13 @@ const ChatHeader = ({ onlineUsers, typingUsers }: PropTypes) => {
     const { session } = useSession();
     const currentUserId = session?.user.id;
     const secondUserId = secondUser?.id;
+    const pathname = usePathname();
+    const router = useRouter();
 
     const showInfo = async () => {
-        await authActions.signOut();
+        await fetch('/api/auth/signout')
         socket.disconnect()
+        router.push(`/login?callbackUrl=${pathname}`);
     }
 
     const roomId = btoa([currentUserId, secondUserId].sort().join('_'));
