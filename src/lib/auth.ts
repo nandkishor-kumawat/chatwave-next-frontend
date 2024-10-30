@@ -6,7 +6,6 @@ import { Lucia, User, Session } from "lucia";
 import { Google } from "arctic";
 import { User as PrismaUser } from "@prisma/client";
 import { userAgent } from "next/server";
-import { getPlainHeaders } from "@/actions/call.actions";
 
 const adapter = new PrismaAdapter(prisma.session, prisma.user);
 
@@ -73,9 +72,7 @@ export const createSession = async (userId: string, provider: 'google' | 'creden
         longitude,
         timezone,
         postal
-    } = await fetch('https://ipapi.co/json', {
-        headers: (await getPlainHeaders())
-    }).then(res => res.json());
+    } = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/get-info`).then(res => res.json());
 
     const { ip: ip4 } = await fetch('https://api.ipify.org?format=json').then(res => res.json());
 

@@ -30,7 +30,7 @@ const LiveKitComp = ({ token, room }: { token: string; room: string }) => {
     const handleRoomLeave = useCallback(() => {
         console.log('leaviong/...')
         router.back();
-    }, []);
+    }, [router]);
 
 
 

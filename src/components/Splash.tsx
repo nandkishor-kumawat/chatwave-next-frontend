@@ -60,7 +60,7 @@ export default function Splash() {
             dispatch(userActions.setOnlineUsers(sockets));
         })
 
-    }, [socket])
+    }, [socket, dispatch]);
 
     return null;
 }      
