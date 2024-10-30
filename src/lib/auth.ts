@@ -62,12 +62,37 @@ export const createSession = async (userId: string, provider: 'google' | 'creden
     const h = headers();
     const { ua, browser, os } = userAgent({ headers: h });
     //https://ipapi.co/json
-    const { ip } = await fetch('https://api.ipify.org?format=json').then(res => res.json());
+
+    const {
+        ip,
+        city,
+        region,
+        country_name: country,
+        latitude,
+        longitude,
+        timezone,
+        postal
+    } = await fetch('https://ipapi.co/json', {
+        headers: h.entries().reduce((acc, [key, value]) => {
+            acc[key] = value;
+            return acc;
+        }, {} as any)
+    }).then(res => res.json());
+
+    const { ip: ip4 } = await fetch('https://api.ipify.org?format=json').then(res => res.json());
+
     const deviceInfo = {
         userAgent: ua,
         browser: `${browser.name} ${browser.version}`,
         os: `${os.name} ${os.version}`,
-        ip
+        ip: ip || ip4,
+        city,
+        region,
+        country,
+        latitude,
+        longitude,
+        timezone,
+        postal
     }
     const session = await lucia.createSession(userId, { provider, ...deviceInfo });
     const sessionCookie = lucia.createSessionCookie(session.id);

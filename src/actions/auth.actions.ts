@@ -3,9 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { hash, verify } from "@node-rs/argon2";
 import prisma from "@/lib/prisma";
-import { headers } from "next/headers";
 import { createSession } from "@/lib/auth";
-import { redirect } from "next/navigation";
 
 
 export const signIn = async ({
@@ -101,14 +99,4 @@ export const signUp = async (formData: FormData) => {
         console.log(error)
         return { error: 'Error creating user' }
     }
-}
-
-export const signOut = async () => {
-    await fetch(process.env.NEXT_PUBLIC_BASE_URL + '/api/auth/signout', {
-        headers: headers()
-    })
-
-    const callbackUrl = new URL(headers().get('referer') ?? '/').pathname;
-    revalidatePath('/', 'layout')
-    redirect(`/login?callbackUrl=${callbackUrl}`);
 }

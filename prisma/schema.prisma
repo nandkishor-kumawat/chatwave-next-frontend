@@ -43,9 +43,16 @@ model Session {
   expiresAt DateTime?
   provider  Providers? @default(credentials)
   userAgent String?
-  ip        String?
   browser   String?
   os        String?
+  ip        String?
+  city      String?
+  country   String?
+  region    String?
+  latitude  Float?
+  longitude Float?
+  timezone  String?
+  postal    String?
   user      User       @relation(references: [id], fields: [userId], onDelete: Cascade)
   createdAt DateTime   @default(now()) @map("created_at")
 

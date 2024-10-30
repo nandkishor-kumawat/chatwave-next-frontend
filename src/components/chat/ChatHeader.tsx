@@ -2,11 +2,9 @@
 import React from 'react'
 import { useAppSelector } from '@/redux/store'
 import { Box, Stack, Avatar, Typography, Divider, Button, ButtonGroup } from '@mui/material'
-import CallIcon from '@mui/icons-material/Call';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Link from 'next/link';
-import { authActions } from '@/actions';
 import { useSession } from '@/hooks';
 import { useSocket } from '../providers';
 import { usePathname, useRouter } from 'next/navigation';
@@ -67,7 +65,7 @@ const ChatHeader = ({ onlineUsers, typingUsers }: PropTypes) => {
                         <Button variant='text'>
                             <Link
                                 suppressHydrationWarning
-                                href={`/call?has_video=true&room=${roomId}`}>
+                                href={`/call?has_video=true&room=${roomId}&id=${btoa(secondUserId)}`}>
                                 <VideoCallIcon sx={{ color: 'white' }} />
                             </Link>
                         </Button>
