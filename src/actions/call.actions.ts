@@ -1,6 +1,7 @@
 "use server"
 import { getAuth } from "@/lib/auth";
 import { AccessToken } from "livekit-server-sdk";
+import { headers } from "next/headers";
 
 export const getParticipantToken = async (room: string) => {
 
@@ -33,4 +34,15 @@ export const getParticipantToken = async (room: string) => {
     at.addGrant({ room, roomJoin: true, canPublish: true, canSubscribe: true });
 
     return { token: await at.toJwt() };
+}
+
+
+export const getPlainHeaders = async () => {
+    const h = headers();
+    const row: Record<string, string> = {};
+    h.entries().forEach(([key, value]) => {
+        row[key] = value;
+    });
+
+    return row;
 }
