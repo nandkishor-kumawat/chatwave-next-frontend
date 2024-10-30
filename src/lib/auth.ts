@@ -62,6 +62,11 @@ export const createSession = async (userId: string, provider: 'google' | 'creden
     const h = headers();
     const { ua, browser, os } = userAgent({ headers: h });
     //https://ipapi.co/json
+    const raw = h.entries().reduce((acc, [key, value]) => {
+        acc[key] = value;
+        return acc;
+    }, {} as any)
+    console.log(raw);
 
     const {
         ip,
@@ -73,10 +78,7 @@ export const createSession = async (userId: string, provider: 'google' | 'creden
         timezone,
         postal
     } = await fetch('https://ipapi.co/json', {
-        headers: h.entries().reduce((acc, [key, value]) => {
-            acc[key] = value;
-            return acc;
-        }, {} as any)
+        headers: raw
     }).then(res => res.json());
 
     const { ip: ip4 } = await fetch('https://api.ipify.org?format=json').then(res => res.json());
