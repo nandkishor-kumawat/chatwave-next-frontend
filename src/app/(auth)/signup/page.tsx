@@ -87,7 +87,7 @@ export default function ProfileForm() {
 
 
   return (
-    <div className="container max-w-md m-auto sm:my-32 my-28">
+    <div className="container max-w-md m-auto sm:my-32 my-28 px-3">
       {isLoading && <Overlay />}
       <h1 className="text-3xl font-bold my-4">Create your account</h1>
       <Form {...form}>
