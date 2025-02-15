@@ -63,31 +63,40 @@ export const createSession = async (userId: string, provider: 'google' | 'creden
     const { ua, browser, os } = userAgent({ headers: h });
     //https://ipapi.co/json
 
-    const {
-        ip,
-        city,
-        region,
-        country_name: country,
-        latitude,
-        longitude,
-        timezone,
-        postal
-    } = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/get-info`).then(res => res.json());
+    // const {
+    //     ip,
+    //     city,
+    //     region,
+    //     country_name: country,
+    //     latitude,
+    //     longitude,
+    //     timezone,
+    //     postal
+    // } = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/get-info`).then(res => res.json());
 
-    const { ip: ip4 } = await fetch('https://api.ipify.org?format=json').then(res => res.json());
+    // const { ip: ip4 } = await fetch('https://api.ipify.org?format=json').then(res => res.json());
 
     const deviceInfo = {
         userAgent: ua,
         browser: `${browser.name} ${browser.version}`,
         os: `${os.name} ${os.version}`,
-        ip: ip || ip4,
-        city,
-        region,
-        country,
-        latitude,
-        longitude,
-        timezone,
-        postal
+        // ip: ip,
+        // ip4,
+        // city,
+        // region,
+        // country,
+        // latitude,
+        // longitude,
+        // timezone,
+        // postal,
+        ip: h.get("x-forwarded-for"),
+        city: decodeURIComponent(h.get("x-vercel-ip-city") ?? ""),
+        region: h.get("x-vercel-ip-region"),
+        country: h.get("x-vercel-ip-country"),
+        latitude: h.get("x-vercel-ip-latitude"),
+        longitude: h.get("x-vercel-ip-longitude"),
+        timezone: h.get("x-vercel-ip-timezone"),
+        postal: h.get("x-vercel-ip-postal-code")
     }
     const session = await lucia.createSession(userId, { provider, ...deviceInfo });
     const sessionCookie = lucia.createSessionCookie(session.id);
